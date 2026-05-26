@@ -3,7 +3,7 @@
 Personaje::Personaje(QString nombre, float posx, float posy, unsigned short vida)
     : posx(posx),posy(posy),velx(0.0f),vely(0.0f),acelx(0.0f),acely(0.0f),
     ancho(0.0f),alto(0.0f),vida(vida),activo(true),nombre(nombre),
-    estado(Estado::Quieto),zonaActual(ZonaAtaque::Men){}
+    estado(Estado::Quieto),zonaActual(ZonaAtaque::Inicial){}
 
 void Personaje::actualizar(float difTiempo)
 {
@@ -20,8 +20,6 @@ void Personaje::actualizar(float difTiempo)
         estado= Estado::Moviendose;
     } else if (estado == Estado::Moviendose) {
         estado= Estado::Quieto;
-    } else if(vida==1){
-        estado= Estado::Vulnerable;
     }
 }
 

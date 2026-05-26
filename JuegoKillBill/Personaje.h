@@ -4,7 +4,7 @@
 
 class Personaje{
 public:
-    enum class ZonaAtaque {Men,Do,Kote};
+    enum class ZonaAtaque {Men,Do,Kote,Inicial};
     enum class Estado {Quieto,Moviendose,Atacando,Defendiendo,Saltando,
                         Vulnerable,Golpeado,Derrotado};
 protected:
