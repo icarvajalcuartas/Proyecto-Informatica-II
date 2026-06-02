@@ -3,15 +3,27 @@
 #include <QGraphicsObject>
 #include <QString>
 
+enum class ZonaAtaque {Men,Do,Kote,Inicial};
+enum class Estado {Quieto,Moviendose,Atacando,Defendiendo,Saltando, Vulnerable,Golpeado,Derrotado};
+enum class Direccion{Adelante, Atras, Derecha, Izquierda};
+
+struct AnimacionKey {
+    Estado estado;
+    Direccion direccion;
+    ZonaAtaque zona;
+    bool operator<(const AnimacionKey& otra) const {
+        if(static_cast<int>(estado) != static_cast<int>(otra.estado))
+            return static_cast<int>(estado) < static_cast<int>(otra.estado);
+        if(static_cast<int>(direccion) != static_cast<int>(otra.direccion))
+            return static_cast<int>(direccion) < static_cast<int>(otra.direccion);
+        return static_cast<int>(zona) < static_cast<int>(otra.zona); }
+};
+
 class Personaje: public QGraphicsObject{
     Q_OBJECT
-public:
-    enum class ZonaAtaque {Men,Do,Kote,Inicial};
-    enum class Estado {Quieto,Moviendose,Atacando,Defendiendo,Saltando,
-                        Vulnerable,Golpeado,Derrotado};
 protected:
     QPixmap spriteActual;
-    QMap<Estado, QVector<QPixmap>> sprites;
+    QMap<AnimacionKey, QVector<QPixmap>*> sprites;
     unsigned short int frameActual;
     float posx;
     float posy;
@@ -22,19 +34,23 @@ protected:
     float ancho;
     float alto;
     unsigned short int vida;
-    bool activo;
-    QString nombre;
+    bool activo; QString nombre;
     Estado estado;
     ZonaAtaque zonaActual;
+    Direccion dirActual;
+    QVector<QPixmap>* obtenerSpriteActual();
 public:
-    Personaje (QString nombre, float posx, float posy, unsigned short int vida,QGraphicsItem* parent = nullptr);
+    Personaje (QString nombre, float posx, float posy, unsigned short int vida,
+              QGraphicsItem* parent = nullptr);
     QRectF boundingRect() const override = 0;
     void paint(QPainter* painter,const QStyleOptionGraphicsItem* option, QWidget* widget) override = 0;
-    void cargarSprites(const QString& ruta, Estado estado, unsigned short int fila, unsigned short int numFrames,
-                       unsigned short int frameAncho,unsigned short int frameAlto);
+    void cargarSprites(const QString& ruta, Estado estado, Direccion direccion,
+                       ZonaAtaque zona, unsigned short int fila,
+                       unsigned short int numFrames, unsigned short int frameAncho,unsigned short int frameAlto);
     void avanzarFrame();
     void actualizarSprite();
     void actualizarEscala25D(float yMin, float yMax,float escalaMin, float escalaMax);
+    void liberarSprites();
     virtual void actualizar(float difTiempo)=0;
     virtual void iniciarAtaque(ZonaAtaque zona)=0;
     void setVelx(float vx);
@@ -43,6 +59,7 @@ public:
     void setAcely(float ay);
     void setPosx(float newPosx);
     void setPosy(float newPosy);
+    void setFrameActual(unsigned short int frame);
     float getPosx() const;
     float getPosy() const;
     float getVelx() const;
@@ -56,5 +73,4 @@ public:
     QString getNombre() const;
     virtual ~Personaje();
 };
-
 #endif // PERSONAJE_H
