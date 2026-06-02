@@ -35,6 +35,9 @@ void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
              << spriteActual.height();
     painter->drawRect(0,0,128,128);
     painter->drawPixmap(0,0,spriteActual);
+    painter->drawRect(getZonaMen());
+    painter->drawRect(getZonaDo());
+    painter->drawRect(getZonaKote());
 }
 
 void Bride::setModoFisica(ModoFisica modo)

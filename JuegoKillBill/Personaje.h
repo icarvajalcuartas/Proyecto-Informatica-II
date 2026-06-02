@@ -41,6 +41,9 @@ protected:
     Estado estado;
     ZonaAtaque zonaActual;
     Direccion dirActual;
+    QRectF zonaMenLocal;
+    QRectF zonaDoLocal;
+    QRectF zonaKoteLocal;
     QVector<QPixmap>* obtenerSpriteActual();
 public:
     Personaje (QString nombre, float posx, float posy, unsigned short int vida,
@@ -54,6 +57,7 @@ public:
     void actualizarSprite();
     void actualizarEscala25D(float yMin, float yMax,float escalaMin, float escalaMax);
     void liberarSprites();
+    ZonaAtaque detectarZonaAtaque(QRectF &golpe);
     virtual void actualizar(float difTiempo)=0;
     virtual void iniciarAtaque(ZonaAtaque zona)=0;
     void setVelx(float vx);
@@ -74,6 +78,9 @@ public:
     unsigned short int getVida() const;
     bool getActivo() const;
     QString getNombre() const;
+    QRectF getZonaMen() const;
+    QRectF getZonaDo() const;
+    QRectF getZonaKote() const;
     virtual ~Personaje();
 };
 #endif // PERSONAJE_H
