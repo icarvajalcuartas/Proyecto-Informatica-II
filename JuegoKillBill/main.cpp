@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
     ventana.setWindowTitle("Kill Bill Kendo");
     ventana.resize(1200, 630);
     ventana.show();
-    Bride jugador(400,340,0);
-    qDebug()<<jugador.getVida();
+    // Bride jugador(400,340,0);
+    // qDebug()<<jugador.getVida();
     //w.show();
     return a.exec();
 }
