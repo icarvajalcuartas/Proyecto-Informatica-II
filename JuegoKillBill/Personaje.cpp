@@ -4,7 +4,11 @@ Personaje::Personaje(QString nombre, float posx, float posy,
     QGraphicsObject(parent),spriteActual(),frameActual(0),posx(posx),posy(posy),velx(0.0f),vely(0.0f), acelx(0.0f),
     acely(0.0f),ancho(0.0f),alto(0.0f),vida(vida),activo(true), nombre(nombre),
     estado(Estado::Quieto),zonaActual(ZonaAtaque::Inicial),dirActual(Direccion::Izquierda)
-    {}
+    {
+    zonaMenLocal = QRectF(35, 5, 60, 25);
+    zonaDoLocal = QRectF(30, 40, 65, 30);
+    zonaKoteLocal = QRectF(25, 80, 70, 25);
+    }
 
 void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion direccion,
                               ZonaAtaque zona, unsigned short int fila,
@@ -82,6 +86,25 @@ void Personaje::liberarSprites() {
     qDeleteAll(sprites);
     sprites.clear();
 }
+
+ZonaAtaque Personaje::detectarZonaAtaque(QRectF &golpe)
+{
+    QRectF men = mapRectToScene(getZonaMen());
+    QRectF do_=mapRectToScene(getZonaDo());
+    QRectF kote= mapRectToScene(getZonaKote());
+    ZonaAtaque resultado = ZonaAtaque::Inicial;
+
+    if(golpe.intersects(men)){
+        resultado= ZonaAtaque::Men;
+    }
+    if(golpe.intersects(do_)){
+        resultado= ZonaAtaque::Do;
+    }
+    if(golpe.intersects(kote)){
+        resultado=ZonaAtaque::Kote;
+    }
+    return resultado;
+}
 void Personaje::setVelx(float vx){velx = vx;}
 void Personaje::setVely(float vy){vely = vy;}
 void Personaje::setAcelx(float ax){acelx = ax;}
@@ -106,6 +129,9 @@ float Personaje::getAlto() const{return alto;}
 unsigned short Personaje::getVida() const{return vida;}
 bool Personaje::getActivo() const{return activo;}
 QString Personaje::getNombre() const{return nombre;}
+QRectF Personaje::getZonaMen() const{return zonaMenLocal;}
+QRectF Personaje::getZonaDo() const{return zonaDoLocal;}
+QRectF Personaje::getZonaKote() const{return zonaKoteLocal;}
 Personaje::~Personaje() {
     liberarSprites();
 }
