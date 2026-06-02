@@ -1,9 +1,41 @@
 #include "Bride.h"
-
+#include <QGraphicsObject>
+#include <QString>
+#include <QPixmap>
+#include <QVector>
+#include <QMap>
+#include <QPainter>
 
 Bride::Bride(float posx, float posy):Personaje("The Bride",posx,posy,5),
     contZanshin(0),puntaje(0),ataqueValido(false),fisicaActual(ModoFisica::Uniforme),
-    enSuelo(true), dirActual(Direccion::Ninguna){}
+    enSuelo(true){
+    cargarSprites(
+        ":/sprites/thebride.png",
+        Estado::Quieto,
+        Direccion::Adelante,
+        ZonaAtaque::Inicial,
+        1, 1, 128, 128);
+
+    dirActual = Direccion::Adelante;
+    estado = Estado::Quieto;
+
+    actualizarSprite();
+}
+
+QRectF Bride::boundingRect() const
+{
+    return QRectF(0,0,128,128);
+}
+
+void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    qDebug() << "paint ejecutado";
+    qDebug() << "sprite nulo:" << spriteActual.isNull();
+    qDebug() << spriteActual.width()
+             << spriteActual.height();
+    painter->drawRect(0,0,128,128);
+    painter->drawPixmap(0,0,spriteActual);
+}
 
 void Bride::setModoFisica(ModoFisica modo)
 {
