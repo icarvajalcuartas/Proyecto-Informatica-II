@@ -1,13 +1,18 @@
 #ifndef PERSONAJE_H
 #define PERSONAJE_H
+#include <QGraphicsObject>
 #include <QString>
 
-class Personaje{
+class Personaje: public QGraphicsObject{
+    Q_OBJECT
 public:
     enum class ZonaAtaque {Men,Do,Kote,Inicial};
     enum class Estado {Quieto,Moviendose,Atacando,Defendiendo,Saltando,
                         Vulnerable,Golpeado,Derrotado};
 protected:
+    QPixmap spriteActual;
+    QMap<Estado, QVector<QPixmap>> sprites;
+    unsigned short int frameActual;
     float posx;
     float posy;
     float velx;
@@ -22,10 +27,22 @@ protected:
     Estado estado;
     ZonaAtaque zonaActual;
 public:
-    Personaje (QString nombre, float posx, float posy, unsigned short int vida);
-    virtual void actualizar(float difTiempo);
-    virtual void mover(float dirX, float dirY);
+    Personaje (QString nombre, float posx, float posy, unsigned short int vida,QGraphicsItem* parent = nullptr);
+    QRectF boundingRect() const override = 0;
+    void paint(QPainter* painter,const QStyleOptionGraphicsItem* option, QWidget* widget) override = 0;
+    void cargarSprites(const QString& ruta, Estado estado, unsigned short int fila, unsigned short int numFrames,
+                       unsigned short int frameAncho,unsigned short int frameAlto);
+    void avanzarFrame();
+    void actualizarSprite();
+    void actualizarEscala25D(float yMin, float yMax,float escalaMin, float escalaMax);
+    virtual void actualizar(float difTiempo)=0;
     virtual void iniciarAtaque(ZonaAtaque zona)=0;
+    void setVelx(float vx);
+    void setVely(float vy);
+    void setAcelx(float ax);
+    void setAcely(float ay);
+    void setPosx(float newPosx);
+    void setPosy(float newPosy);
     float getPosx() const;
     float getPosy() const;
     float getVelx() const;
@@ -37,7 +54,7 @@ public:
     unsigned short int getVida() const;
     bool getActivo() const;
     QString getNombre() const;
-    virtual ~Personaje()=default;
+    virtual ~Personaje();
 };
 
 #endif // PERSONAJE_H
