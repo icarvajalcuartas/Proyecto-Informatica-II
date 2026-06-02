@@ -2,6 +2,9 @@
 #define PERSONAJE_H
 #include <QGraphicsObject>
 #include <QString>
+#include <QPixmap>
+#include <QVector>
+#include <QMap>
 
 enum class ZonaAtaque {Men,Do,Kote,Inicial};
 enum class Estado {Quieto,Moviendose,Atacando,Defendiendo,Saltando, Vulnerable,Golpeado,Derrotado};

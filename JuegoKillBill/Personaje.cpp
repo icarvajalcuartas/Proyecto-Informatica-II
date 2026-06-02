@@ -12,13 +12,24 @@ void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion dir
                               unsigned short int frameAlto){
     QPixmap hojaSprites (ruta);
     if(hojaSprites.isNull()){
+        qDebug()<<"No se encontro la ruta";
         return;
+    }else{
+        qDebug()<<" se encontro la ruta";
     }
+    qDebug() << hojaSprites.width()
+             << hojaSprites.height();
     QVector<QPixmap>* frames = new QVector<QPixmap>();
     frames->reserve(numFrames);
 
     for (unsigned short int i=0; i<numFrames; ++i){
-        frames->append(hojaSprites.copy(i*frameAncho, fila*frameAlto, frameAncho, frameAlto));
+        qDebug() << "fila:" << fila;
+        qDebug() << "numFrames:" << numFrames;
+        qDebug() << "frameAncho:" << frameAncho;
+        qDebug() << "frameAlto:" << frameAlto;
+        QPixmap frame= hojaSprites.copy(i*frameAncho, fila*frameAlto, frameAncho, frameAlto);
+        qDebug() << "Frame creado:"<< frame.width()<< frame.height();
+        frames->append(frame);
     }
 
     AnimacionKey key{ estado, direccion, zona };
@@ -27,6 +38,7 @@ void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion dir
     {
         delete sprites[key];
     }
+    qDebug() << "Frames cargados:" << frames->size();
     sprites.insert(key,frames);
 }
 
@@ -34,9 +46,11 @@ QVector<QPixmap> *Personaje::obtenerSpriteActual() {
     AnimacionKey key{ estado, dirActual, zonaActual };
 
     auto it = sprites.find(key);
-    if(it != sprites.end())
+    if(it != sprites.end()){
+        qDebug() << "Animacion encontrada";
         return it.value();
-
+    }
+    qDebug() << "Animacion NO encontrada";
     return nullptr;
 }
 
@@ -48,10 +62,14 @@ void Personaje::avanzarFrame() {
     }
 }
 void Personaje::actualizarSprite() {
+    qDebug() << "actualizarSprite llamado";
     QVector<QPixmap>* frames = obtenerSpriteActual();
     if(frames && !frames->isEmpty()) {
+        qDebug() << "frames encontrados:" << frames->size();
         frameActual = 0;
         spriteActual = frames->at(0);
+        qDebug() << spriteActual.width()<< spriteActual.height();
+
         update();
     }
 }

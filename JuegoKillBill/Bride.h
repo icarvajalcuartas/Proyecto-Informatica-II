@@ -2,7 +2,6 @@
 #define BRIDE_H
 #include "Personaje.h"
 enum class ModoFisica{Uniforme, Parabolica, dos5Dimensiones, SaltoY};
-enum class Direccion{Izquierda, Derecha, Ninguna};
 
 class Bride:public Personaje{
 private:
@@ -13,7 +12,6 @@ private:
     bool enSuelo;
     const float FUERZA_SALTO = 500.0f;
     const float FUERZA_HORIZONTAL = 300.0f;
-    Direccion dirActual;
     void movRectilineo(float difTiempo);
     void movSaltoY(float difTiempo);
     void movParabolico(float difTiempo);
@@ -21,6 +19,8 @@ private:
 public:
     Bride(float posx,float posy);
     Bride(const Bride& copiaBride);
+    QRectF boundingRect() const override;
+    void paint(QPainter* painter,const QStyleOptionGraphicsItem* option,QWidget* widget) override;
     void setModoFisica(ModoFisica modo);
     void setDireccion(Direccion dir);
     void setEnSuelo(bool suelo);
