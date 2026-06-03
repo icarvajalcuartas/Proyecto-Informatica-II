@@ -11,7 +11,7 @@ private:
     ModoFisica fisicaActual;
     bool enSuelo;
     const float FUERZA_SALTO = 500.0f;
-    const float FUERZA_HORIZONTAL = 100.0f;
+    const float FUERZA_HORIZONTAL = 50.0f;
     void movRectilineo();
     void movSaltoY(float difTiempo);
     void movParabolico(float difTiempo);
