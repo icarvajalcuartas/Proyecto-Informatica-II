@@ -105,6 +105,60 @@ ZonaAtaque Personaje::detectarZonaAtaque(QRectF &golpe)
     }
     return  ZonaAtaque::Inicial;
 }
+
+void Personaje::seccionarSpritesheet(const QString &ruta)
+{
+    unsigned short int filasSprites = 32;
+
+    Direccion direcciones[4] ={Direccion::Adelante,Direccion::Atras,Direccion::Derecha,Direccion::Izquierda};
+
+    for(unsigned short int i = 0; i < filasSprites; i++){
+        Estado estadoSprite;
+        ZonaAtaque zonaSprite;
+        Direccion direccionSprite;
+        direccionSprite = direcciones[i % 4];
+        switch(i/4){
+        case 0:
+            estadoSprite = Estado::Quieto;
+            zonaSprite = ZonaAtaque::Inicial;
+            break;
+        case 1:
+            estadoSprite = Estado::Moviendose;
+            zonaSprite = ZonaAtaque::Inicial;
+            break;
+        case 2:
+            estadoSprite = Estado::Atacando;
+            zonaSprite = ZonaAtaque::Men;
+            break;
+        case 3:
+            estadoSprite = Estado::Atacando;
+            zonaSprite = ZonaAtaque::Do;
+            break;
+        case 4:
+            estadoSprite = Estado::Atacando;
+            zonaSprite = ZonaAtaque::Kote;
+            break;
+        case 5:
+            estadoSprite = Estado::Saltando;
+            zonaSprite = ZonaAtaque::Inicial;
+            break;
+        case 6:
+            estadoSprite = Estado::Golpeado;
+            zonaSprite = ZonaAtaque::Inicial;
+            break;
+        case 7:
+            estadoSprite = Estado::Derrotado;
+            zonaSprite = ZonaAtaque::Inicial;
+            break;
+        default:
+            continue;
+        }
+        cargarSprites(ruta,estadoSprite,direccionSprite,zonaSprite,i,2,128,128);
+        if (estadoSprite == Estado::Atacando){
+            cargarSprites(ruta,Estado::Defendiendo,direccionSprite,zonaSprite,i,2,128,128);
+        }
+    }
+}
 void Personaje::setVelx(float vx){velx = vx;}
 void Personaje::setVely(float vy){vely = vy;}
 void Personaje::setAcelx(float ax){acelx = ax;}

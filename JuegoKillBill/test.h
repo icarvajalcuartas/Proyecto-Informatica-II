@@ -41,6 +41,17 @@ protected:
                 break;
             }
         }
+        else if(event->type() == QEvent::KeyRelease){
+            QKeyEvent* key = static_cast<QKeyEvent*>(event);
+            switch(key->key()){
+            case Qt::Key_A:
+                bride->detenerMovimiento();
+                break;
+            case Qt::Key_D:
+                bride->detenerMovimiento();
+                break;
+            }
+        }
         return QObject::eventFilter(obj, event);
     }
 };

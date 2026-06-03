@@ -9,11 +9,7 @@
 Bride::Bride(float posx, float posy):Personaje("The Bride",posx,posy,5),
     contZanshin(0),puntaje(0),ataqueValido(false),fisicaActual(ModoFisica::Uniforme),
     enSuelo(true){
-
-    dirActual = Direccion::Adelante;
-    estado = Estado::Quieto;
-    cargarSprites(":/sprites/thebride_2.png",estado,dirActual,
-                  ZonaAtaque::Inicial,4, 2, 128, 128);
+    seccionarSpritesheet(":/sprites/thebride_2.png");
     actualizarSprite();
 }
 
@@ -112,7 +108,7 @@ void Bride::actualizar(float difTiempo)
         }
     }
 
-    tiempoAnimacion -= DURACION_FRAME;
+    tiempoAnimacion += DURACION_FRAME;
 
     if(tiempoAnimacion >= DURACION_FRAME)
     {
@@ -147,10 +143,27 @@ void Bride::movRectilineo()
 
 
 void Bride::movSaltoY(float difTiempo)
-{
-    vely += acely * difTiempo;
+{/*
+    vely += 2 * difTiempo;
     posy += vely  * difTiempo;
-    setPos(posx, posy);
+    setPos(posx, posy);*/
+    vely += 500.0f * difTiempo;
+    posy += vely * difTiempo;
+
+    if(posy >= 300.0f)
+    {
+        posy = 300.0f;
+        vely = 0;
+
+        enSuelo = true;
+
+        estado = Estado::Quieto;
+
+        fisicaActual = ModoFisica::Uniforme;
+        frameActual = 0;
+    }
+
+    setPos(posx,posy);
 }
 
 void Bride::movParabolico(float difTiempo)
@@ -223,6 +236,8 @@ void Bride::detenerMovimiento()
     estado= Estado::Quieto;
     zonaActual= ZonaAtaque::Inicial;
     velx=0;
+    frameActual=0;
+    actualizarSprite();
 }
 
 void Bride::ataqueMen()
