@@ -3,33 +3,39 @@
 #include <QWidget>
 #include <QDebug>
 #include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QTimer>
+#include <QKeyEvent>
 #include "Bride.h"
 #include <QDir>
+#include "test.h"
 
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //MainWindow w;
-    // QGraphicsView * ventana;
-    // ventana.setWindowTitle("Kill Bill Kendo");
-    // ventana.resize(1200, 630);
-    // ventana.show();
     qDebug() << QDir::currentPath();
+    //ventana
+    QGraphicsView* ventana;
+
+    //fin ventana
+    //scene y poner a bride
     QGraphicsScene* scene = new QGraphicsScene();
+    ventana = new QGraphicsView(scene);
+    ventana->setWindowTitle("Kill Bill Kendo");
+    ventana->resize(1200,630);
 
     Bride* bride = new Bride(100,100);
 
     scene->addItem(bride);
     bride->setPos(100,100);
 
-    QGraphicsView* ventana = new QGraphicsView(scene);
-    ventana->setWindowTitle("Kill Bill Kendo");
-    ventana->resize(1200,630);
+    //prueba de perifericos
+    Test* input = new Test(bride);
+    ventana->installEventFilter(input);
+    // fin prueba perifericos
+
     ventana->show();
-    // Bride jugador(400,340,0);
-    // qDebug()<<jugador.getVida();
-    //w.show();
     return a.exec();
 }
