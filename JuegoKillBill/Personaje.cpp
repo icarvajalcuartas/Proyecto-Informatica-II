@@ -5,7 +5,7 @@ Personaje::Personaje(QString nombre, float posx, float posy,
     acely(0.0f),ancho(0.0f),alto(0.0f),vida(vida),activo(true), nombre(nombre),
     estado(Estado::Quieto),zonaActual(ZonaAtaque::Inicial),dirActual(Direccion::Izquierda)
     {
-    zonaMenLocal = QRectF(35, 5, 60, 25);
+    zonaMenLocal = QRectF(30, 5, 60, 25);
     zonaDoLocal = QRectF(30, 40, 65, 30);
     zonaKoteLocal = QRectF(25, 80, 70, 25);
     }
@@ -60,20 +60,21 @@ QVector<QPixmap> *Personaje::obtenerSpriteActual() {
 
 void Personaje::avanzarFrame() {
     QVector<QPixmap>* frames = obtenerSpriteActual();
+
     if(frames && !frames->isEmpty()){
         frameActual = (frameActual + 1) % frames->size();
-        spriteActual = frames->at(frameActual); update();
     }
 }
 void Personaje::actualizarSprite() {
     qDebug() << "actualizarSprite llamado";
     QVector<QPixmap>* frames = obtenerSpriteActual();
     if(frames && !frames->isEmpty()) {
+        if(frameActual >= frames->size()){
+            frameActual = 0;
+        }
         qDebug() << "frames encontrados:" << frames->size();
-        frameActual = 0;
-        spriteActual = frames->at(0);
+        spriteActual = frames->at(frameActual);
         qDebug() << spriteActual.width()<< spriteActual.height();
-
         update();
     }
 }
@@ -92,18 +93,17 @@ ZonaAtaque Personaje::detectarZonaAtaque(QRectF &golpe)
     QRectF men = mapRectToScene(getZonaMen());
     QRectF do_=mapRectToScene(getZonaDo());
     QRectF kote= mapRectToScene(getZonaKote());
-    ZonaAtaque resultado = ZonaAtaque::Inicial;
 
     if(golpe.intersects(men)){
-        resultado= ZonaAtaque::Men;
+        return ZonaAtaque::Men;
     }
     if(golpe.intersects(do_)){
-        resultado= ZonaAtaque::Do;
+        return ZonaAtaque::Do;
     }
     if(golpe.intersects(kote)){
-        resultado=ZonaAtaque::Kote;
+        return ZonaAtaque::Kote;
     }
-    return resultado;
+    return  ZonaAtaque::Inicial;
 }
 void Personaje::setVelx(float vx){velx = vx;}
 void Personaje::setVely(float vy){vely = vy;}

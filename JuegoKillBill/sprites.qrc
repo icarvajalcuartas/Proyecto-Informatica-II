@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/sprites">
         <file>thebride.png</file>
+        <file>thebride_2.png</file>
     </qresource>
 </RCC>

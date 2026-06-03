@@ -12,12 +12,14 @@ SOURCES += \
     Bride.cpp \
     Personaje.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    test.cpp
 
 HEADERS += \
     Bride.h \
     Personaje.h \
-    mainwindow.h
+    mainwindow.h \
+    test.h
 
 FORMS += \
     mainwindow.ui

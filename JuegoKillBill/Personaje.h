@@ -37,7 +37,8 @@ protected:
     float ancho;
     float alto;
     unsigned short int vida;
-    bool activo; QString nombre;
+    bool activo;
+    QString nombre;
     Estado estado;
     ZonaAtaque zonaActual;
     Direccion dirActual;
@@ -60,6 +61,7 @@ public:
     ZonaAtaque detectarZonaAtaque(QRectF &golpe);
     virtual void actualizar(float difTiempo)=0;
     virtual void iniciarAtaque(ZonaAtaque zona)=0;
+    virtual QRectF getHitboxAtaque()const=0;
     void setVelx(float vx);
     void setVely(float vy);
     void setAcelx(float ax);

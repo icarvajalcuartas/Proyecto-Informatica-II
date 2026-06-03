@@ -9,16 +9,11 @@
 Bride::Bride(float posx, float posy):Personaje("The Bride",posx,posy,5),
     contZanshin(0),puntaje(0),ataqueValido(false),fisicaActual(ModoFisica::Uniforme),
     enSuelo(true){
-    cargarSprites(
-        ":/sprites/thebride.png",
-        Estado::Quieto,
-        Direccion::Adelante,
-        ZonaAtaque::Inicial,
-        1, 1, 128, 128);
 
     dirActual = Direccion::Adelante;
     estado = Estado::Quieto;
-
+    cargarSprites(":/sprites/thebride_2.png",estado,dirActual,
+                  ZonaAtaque::Inicial,4, 2, 128, 128);
     actualizarSprite();
 }
 
@@ -38,6 +33,27 @@ void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawRect(getZonaMen());
     painter->drawRect(getZonaDo());
     painter->drawRect(getZonaKote());
+}
+
+QRectF Bride::getHitboxAtaque() const
+{
+    if(estado != Estado::Atacando)
+        return QRectF();
+
+    switch(zonaActual)
+    {
+    case ZonaAtaque::Men:
+        return QRectF(90,0,80,40);
+
+    case ZonaAtaque::Do:
+        return QRectF(90,40,80,30);
+
+    case ZonaAtaque::Kote:
+        return QRectF(90,75,80,25);
+
+    default:
+        return QRectF();
+    }
 }
 
 void Bride::setModoFisica(ModoFisica modo)
@@ -79,7 +95,7 @@ void Bride::actualizar(float difTiempo)
 {
     switch(fisicaActual){
         case (ModoFisica::Uniforme):{
-            movRectilineo(difTiempo);
+            movRectilineo();
             break;
         }
         case (ModoFisica::Parabolica):{
@@ -95,6 +111,15 @@ void Bride::actualizar(float difTiempo)
             break;
         }
     }
+
+    tiempoAnimacion -= DURACION_FRAME;
+
+    if(tiempoAnimacion >= DURACION_FRAME)
+    {
+        avanzarFrame();
+        tiempoAnimacion -= DURACION_FRAME;
+    }
+    actualizarSprite();
 }
 
 void Bride::iniciarAtaque(ZonaAtaque zona)
@@ -114,9 +139,46 @@ void Bride::esAtaqueValido(ZonaAtaque zona)
     }
 }
 
-void Bride::movRectilineo(float difTiempo)
+void Bride::movRectilineo()
 {
+    posx += velx;
+    setPos(posx, posy);
+}
+
+
+void Bride::movSaltoY(float difTiempo)
+{
+    vely += acely * difTiempo;
+    posy += vely  * difTiempo;
+    setPos(posx, posy);
+}
+
+void Bride::movParabolico(float difTiempo)
+{
+    vely += acely * difTiempo;
     posx += velx * difTiempo;
+    posy += vely * difTiempo;
+    setPos(posx, posy);
+}
+
+void Bride::movDosDimensiones(float difTiempo)
+{
+    velx += acelx * difTiempo;
+    vely += acely * difTiempo;
+    posx += velx * difTiempo;
+    posy += vely * difTiempo;
+    setPos(posx, posy);
+}
+
+
+bool Bride::getEnSuelo() const
+{
+    return enSuelo;
+}
+
+unsigned short Bride::getContZanshin() const
+{
+    return contZanshin;
 }
 
 void Bride::saltar()
@@ -130,36 +192,55 @@ void Bride::saltar()
     }
 }
 
-void Bride::movSaltoY(float difTiempo)
+void Bride::moverDerecha()
 {
-    vely += acely * difTiempo;
-    posy += vely  * difTiempo;
+    estado = Estado::Moviendose;
+    dirActual = Direccion::Derecha;
+    fisicaActual = ModoFisica::Uniforme;
+    velx= FUERZA_HORIZONTAL;
 }
 
-void Bride::movParabolico(float difTiempo)
+void Bride::moverIzquierda()
 {
-    vely += acely * difTiempo;
-    posx += velx * difTiempo;
-    posy += vely * difTiempo;
+    estado = Estado::Moviendose;
+    dirActual = Direccion::Izquierda;
+    fisicaActual = ModoFisica::Uniforme;
+    velx= -FUERZA_HORIZONTAL;
 }
 
-void Bride::movDosDimensiones(float difTiempo)
+void Bride::moverAtras()
 {
-    velx += acelx * difTiempo;
-    vely += acely * difTiempo;
-    posx += velx * difTiempo;
-    posy += vely * difTiempo;
+
 }
 
-
-bool Bride::getEnSuelo() const
+void Bride::moverAdelante()
 {
-    return enSuelo;
+
 }
 
-unsigned short Bride::getContZanshin() const
+void Bride::detenerMovimiento()
 {
-    return contZanshin;
+    estado= Estado::Quieto;
+    zonaActual= ZonaAtaque::Inicial;
+    velx=0;
+}
+
+void Bride::ataqueMen()
+{
+    estado = Estado::Atacando;
+    zonaActual = ZonaAtaque::Men;
+}
+
+void Bride::ataqueDo()
+{
+    estado = Estado::Atacando;
+    zonaActual = ZonaAtaque::Do;
+}
+
+void Bride::ataqueKote()
+{
+    estado = Estado::Atacando;
+    zonaActual = ZonaAtaque::Kote;
 }
 
 
