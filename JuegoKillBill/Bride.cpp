@@ -13,10 +13,7 @@ Bride::Bride(float posx, float posy):Personaje("The Bride",posx,posy,5),
     actualizarSprite();
 }
 
-QRectF Bride::boundingRect() const
-{
-    return QRectF(0,0,128,128);
-}
+QRectF Bride::boundingRect() const {return QRectF(0,0,128,128);}
 
 void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -31,6 +28,47 @@ void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawRect(getZonaKote());
 }
 
+void Bride::actualizar(float difTiempo)
+{
+    if (zanshinEspecialActivo){
+
+        tiempoZanshinEspecial -= difTiempo;
+        if(tiempoZanshinEspecial <=0){
+
+            zanshinEspecialActivo = false;
+            tiempoZanshinEspecial = 0.0f;
+            contZanshin = 0;
+            emit zanshinEspecialterminado();
+        }
+    }
+    switch(fisicaActual){
+    case (ModoFisica::Uniforme):{
+        movRectilineo();
+        break;
+    }
+    case (ModoFisica::Parabolica):{
+        movParabolico(difTiempo);
+        break;
+    }
+    case (ModoFisica::dos5Dimensiones):{
+        movDosDimensiones(difTiempo);
+        break;
+    }
+    case (ModoFisica::SaltoY):{
+        movSaltoY(difTiempo);
+        break;
+    }
+    }
+
+    tiempoAnimacion += difTiempo;
+
+    if(tiempoAnimacion >= DURACION_FRAME)
+    {
+        avanzarFrame();
+        tiempoAnimacion -= DURACION_FRAME;
+    }
+    actualizarSprite();
+}
 QRectF Bride::getHitboxAtaque() const
 {
     if(estado != Estado::Atacando)
@@ -87,36 +125,6 @@ void Bride::input()
 
 }
 
-void Bride::actualizar(float difTiempo)
-{
-    switch(fisicaActual){
-        case (ModoFisica::Uniforme):{
-            movRectilineo();
-            break;
-        }
-        case (ModoFisica::Parabolica):{
-            movParabolico(difTiempo);
-            break;
-        }
-        case (ModoFisica::dos5Dimensiones):{
-            movDosDimensiones(difTiempo);
-            break;
-        }
-        case (ModoFisica::SaltoY):{
-            movSaltoY(difTiempo);
-            break;
-        }
-    }
-
-    tiempoAnimacion += DURACION_FRAME;
-
-    if(tiempoAnimacion >= DURACION_FRAME)
-    {
-        avanzarFrame();
-        tiempoAnimacion -= DURACION_FRAME;
-    }
-    actualizarSprite();
-}
 
 void Bride::iniciarAtaque(ZonaAtaque zona)
 {
@@ -132,6 +140,13 @@ void Bride::esAtaqueValido(ZonaAtaque zona)
     }else{
         ataqueValido=true;
         contZanshin+=1;
+        if (contZanshin >= 3 && !zanshinEspecialActivo){
+            zanshinEspecialActivo = true;
+            tiempoZanshinEspecial = DUR_ZANSHINESPECIAL;
+
+            emit zanshinEspecialIniciado();
+
+        }
     }
 }
 
@@ -229,6 +244,36 @@ void Bride::moverAtras()
 void Bride::moverAdelante()
 {
 
+}
+
+void Bride::saltarDerecha()
+{
+    if(!zanshinEspecialActivo || !enSuelo)
+        return;
+
+    estado = Estado::Saltando;
+
+    fisicaActual = ModoFisica::Parabolica;
+
+    velx = 200.0f;
+    vely = -FUERZA_SALTO;
+
+    enSuelo = false;
+}
+
+void Bride::saltarIzquierda()
+{
+    if(!zanshinEspecialActivo || !enSuelo)
+        return;
+
+    estado = Estado::Saltando;
+
+    fisicaActual = ModoFisica::Parabolica;
+
+    velx = -200.0f;
+    vely = -FUERZA_SALTO;
+
+    enSuelo = false;
 }
 
 void Bride::detenerMovimiento()

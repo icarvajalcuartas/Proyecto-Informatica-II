@@ -4,8 +4,12 @@
 enum class ModoFisica{Uniforme, Parabolica, dos5Dimensiones, SaltoY};
 
 class Bride:public Personaje{
+    Q_OBJECT;
 private:
     unsigned short int contZanshin;
+    bool zanshinEspecialActivo = false;
+    float tiempoZanshinEspecial = 0.0f;
+    const float DUR_ZANSHINESPECIAL = 10.0f;
     unsigned short int puntaje;
     bool ataqueValido;
     ModoFisica fisicaActual;
@@ -20,16 +24,16 @@ private:
     const float DURACION_FRAME = 0.1f;
 public:
     Bride(float posx,float posy);
-    Bride(const Bride& copiaBride);
+    //Bride(const Bride& copiaBride);
     QRectF boundingRect() const override;
     void paint(QPainter* painter,const QStyleOptionGraphicsItem* option,QWidget* widget) override;
+    void actualizar(float difTiempo) override;
     virtual QRectF getHitboxAtaque() const override;
     void setModoFisica(ModoFisica modo);
     void setDireccion(Direccion dir);
     void setEnSuelo(bool suelo);
     void realizarParry();
     void input();
-    void actualizar(float difTiempo) override;
     void iniciarAtaque(ZonaAtaque zona)override;
     void esAtaqueValido(ZonaAtaque zona);
     bool getEnSuelo() const;
@@ -39,11 +43,16 @@ public slots:
     void moverIzquierda();
     void moverAtras();
     void moverAdelante();
+    void saltarDerecha();
+    void saltarIzquierda();
     void detenerMovimiento();
     void saltar();
     void ataqueMen();
     void ataqueDo();
     void ataqueKote();
+signals:
+    void zanshinEspecialIniciado();
+    void zanshinEspecialterminado();
 };
 
 #endif // BRIDE_H
