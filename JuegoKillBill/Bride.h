@@ -22,6 +22,7 @@ private:
     void movDosDimensiones(float difTiempo);
     float tiempoAnimacion =0;
     const float DURACION_FRAME = 0.1f;
+    ZonaAtaque ultimoAtaquevalido;
 public:
     Bride(float posx,float posy);
     //Bride(const Bride& copiaBride);
@@ -29,14 +30,18 @@ public:
     void paint(QPainter* painter,const QStyleOptionGraphicsItem* option,QWidget* widget) override;
     void actualizar(float difTiempo) override;
     virtual QRectF getHitboxAtaque() const override;
+    void sumarPunto();
     void setModoFisica(ModoFisica modo);
     void setDireccion(Direccion dir);
     void setEnSuelo(bool suelo);
     void realizarParry();
+    void recibirGolpe() override;
     void input();
     void iniciarAtaque(ZonaAtaque zona)override;
-    void esAtaqueValido(ZonaAtaque zona);
+    void registrarZanshin(ZonaAtaque zona);
+
     bool getEnSuelo() const;
+    bool getZanshinEspecialActivo() const;
     unsigned short int getContZanshin() const;
 public slots:
     void moverDerecha();
@@ -53,6 +58,7 @@ public slots:
 signals:
     void zanshinEspecialIniciado();
     void zanshinEspecialterminado();
+    void zanshinActualizado(unsigned short int contadorZ);
 };
 
 #endif // BRIDE_H

@@ -7,8 +7,8 @@
 #include <QPainter>
 
 Bride::Bride(float posx, float posy):Personaje("The Bride",posx,posy,5),
-    contZanshin(0),puntaje(0),ataqueValido(false),fisicaActual(ModoFisica::Uniforme),
-    enSuelo(true){
+    contZanshin(0),puntaje(0),fisicaActual(ModoFisica::Uniforme),
+    enSuelo(true),ultimoAtaquevalido(ZonaAtaque::Inicial){
     seccionarSpritesheet(":/sprites/thebride_2.png");
     actualizarSprite();
 }
@@ -39,6 +39,7 @@ void Bride::actualizar(float difTiempo)
             tiempoZanshinEspecial = 0.0f;
             contZanshin = 0;
             emit zanshinEspecialterminado();
+            emit zanshinActualizado(getContZanshin());
         }
     }
     switch(fisicaActual){
@@ -77,16 +78,25 @@ QRectF Bride::getHitboxAtaque() const
     switch(zonaActual)
     {
     case ZonaAtaque::Men:
-        return QRectF(90,0,80,40);
+        return mapRectToScene(QRectF(90,0,80,40));
 
     case ZonaAtaque::Do:
-        return QRectF(90,40,80,30);
+        return mapRectToScene(QRectF(90,40,80,30));
 
     case ZonaAtaque::Kote:
-        return QRectF(90,75,80,25);
+        return mapRectToScene(QRectF(90,75,80,25));
 
     default:
         return QRectF();
+    }
+}
+
+void Bride::sumarPunto()
+{
+    puntaje++;
+
+    if(puntaje>=5){
+        emit victoria();
     }
 }
 
@@ -120,6 +130,14 @@ void Bride::realizarParry()
     estado=Estado::Defendiendo;
 }
 
+void Bride::recibirGolpe()
+{
+    contZanshin = 0;
+    zanshinEspecialActivo = false;
+    emit zanshinEspecialterminado();
+    emit zanshinActualizado(getContZanshin());
+}
+
 void Bride::input()
 {
 
@@ -132,22 +150,25 @@ void Bride::iniciarAtaque(ZonaAtaque zona)
     estado=Estado::Atacando;
 }
 
-void Bride::esAtaqueValido(ZonaAtaque zona)
+void Bride::registrarZanshin(ZonaAtaque zona)
 {
-    if(zonaActual==zona){
-        ataqueValido=false;
+    if(ultimoAtaquevalido==zona){
+
         contZanshin=0;
     }else{
-        ataqueValido=true;
-        contZanshin+=1;
+
+        contZanshin++;
+
         if (contZanshin >= 3 && !zanshinEspecialActivo){
             zanshinEspecialActivo = true;
             tiempoZanshinEspecial = DUR_ZANSHINESPECIAL;
 
             emit zanshinEspecialIniciado();
+            emit zanshinActualizado(getContZanshin());
 
         }
     }
+    ultimoAtaquevalido = zona;
 }
 
 void Bride::movRectilineo()
