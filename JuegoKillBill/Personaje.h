@@ -62,6 +62,7 @@ public:
     virtual void actualizar(float difTiempo)=0;
     virtual void iniciarAtaque(ZonaAtaque zona)=0;
     virtual QRectF getHitboxAtaque()const=0;
+    virtual void recibirGolpe()=0;
     void seccionarSpritesheet(const QString& ruta);
     void setVelx(float vx);
     void setVely(float vy);
@@ -85,5 +86,8 @@ public:
     QRectF getZonaDo() const;
     QRectF getZonaKote() const;
     virtual ~Personaje();
+signals:
+    void derrota();
+    void victoria();
 };
 #endif // PERSONAJE_H
