@@ -1,13 +1,15 @@
 #include "Personaje.h"
+#include <QPainter>
 Personaje::Personaje(QString nombre, float posx, float posy,
                      unsigned short vida,QGraphicsItem* parent) :
     QGraphicsObject(parent),spriteActual(),frameActual(0),posx(posx),posy(posy),velx(0.0f),vely(0.0f), acelx(0.0f),
     acely(0.0f),ancho(0.0f),alto(0.0f),vida(vida),activo(true), nombre(nombre),
     estado(Estado::Quieto),zonaActual(ZonaAtaque::Inicial),dirActual(Direccion::Izquierda)
     {
-    zonaMenLocal = QRectF(30, 5, 60, 25);
-    zonaDoLocal = QRectF(30, 40, 65, 30);
-    zonaKoteLocal = QRectF(25, 80, 70, 25);
+    setPos(posx,posy);
+    zonaMenLocal = QRectF(40, 10, 40, 20);
+    zonaDoLocal = QRectF(20, 40, 80, 50);
+    zonaKoteLocal = QRectF(30, 100, 70, 20);
     }
 
 void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion direccion,
@@ -110,6 +112,39 @@ ZonaAtaque Personaje::detectarZonaAtaque(QRectF &golpe)
     return  ZonaAtaque::Inicial;
 }
 
+QRectF Personaje::getHitboxAtaque() const
+{
+    if(estado != Estado::Atacando)
+        return QRectF();
+
+    QRectF hitbox;
+    switch(zonaActual)
+    {
+    case ZonaAtaque::Men:
+        hitbox = QRectF(0, 0, 30, 40);
+        break;
+
+    case ZonaAtaque::Do:
+        hitbox = QRectF(0, 40, 30, 40);
+        break;
+
+    case ZonaAtaque::Kote:
+        hitbox = QRectF(0, 80, 30, 40);
+        break;
+
+    default:
+        return QRectF();
+    }
+    float offsetX = (dirActual == Direccion::Derecha)? getHitboxCuerpo().width()
+                        : -hitbox.width();
+
+    hitbox.translate(offsetX, 0);
+    return hitbox;
+}
+
+QRectF Personaje:: getHitboxCuerpo() const{
+    return QRectF(10,10,90,100);
+}
 void Personaje::seccionarSpritesheet(const QString &ruta)
 {
     unsigned short int filasSprites = 32;
@@ -163,6 +198,7 @@ void Personaje::seccionarSpritesheet(const QString &ruta)
         }
     }
 }
+
 void Personaje::setVelx(float vx){velx = vx;}
 void Personaje::setVely(float vy){vely = vy;}
 void Personaje::setAcelx(float ax){acelx = ax;}

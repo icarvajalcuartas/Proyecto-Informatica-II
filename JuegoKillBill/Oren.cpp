@@ -1,26 +1,27 @@
 #include "Oren.h"
 #include "QRandomGenerator"
+#include <QGraphicsScene>
+#include "Bride.h"
+#include <QPainter>
 
-Oren::Oren() {}
-
-Oren::Oren(float posx, float posy): Personaje("O-Ren", posx, posy, 5),
-    distanciaAmenaza(200.0f),
+Oren::Oren(float posx, float posy): Personaje("O-Ren", posx, posy, 5), distanciaAmenaza(200.0f),
     distanciaRetroceder(80.0f),
     velocidad(120.0f),
-    acumTiempo(0),
+    acumTiempo(0)
 {
     seccionarSpritesheet(":/sprites/o-ren.png");
     actualizarSprite();
 }
 QRectF Oren::boundingRect() const
 {
-    return QRectF(0,0,128,128);
+    return QRectF(0, 0,128,128);
 }
 void Oren::paint(QPainter *painter,
                  const QStyleOptionGraphicsItem *option,
                  QWidget *widget)
 {
-    painter->drawPixmap(0,0,spriteActual);
+    painter->drawRect(0,0,128,128);
+    painter->drawPixmap(0, 0,spriteActual);
     painter->drawRect(getZonaMen());
     painter->drawRect(getZonaDo());
     painter->drawRect(getZonaKote());
@@ -90,25 +91,14 @@ void Oren::iniciarAtaque(ZonaAtaque zona)
 
     actualizarSprite();
 }
-QRectF Oren::getHitboxAtaque() const
-{
-    if(estado != Estado::Atacando)
-        return QRectF();
 
-    switch(zonaActual)
-    {
-    case ZonaAtaque::Men:
-        return mapRectToScene(QRectF(0,0,80,40));
-    case ZonaAtaque::Do:
-        return mapRectToScene(QRectF(0,40,80,30));
-    case ZonaAtaque::Kote:
-        return mapRectToScene(QRectF(0,75,80,25));
-    default:
-        return QRectF();
-    }
-}
-QRectF Oren::getHitboxCuerpo() const
+void Oren::recibirGolpe()
 {
-    return mapRectToScene(QRectF(20,5,70,100));
+    vida--;
+
+    estado = Estado::Golpeado;
+    frameActual = 0;
+
+    actualizarSprite();
 }
 
