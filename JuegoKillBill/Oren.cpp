@@ -7,7 +7,7 @@
 Oren::Oren(float posx, float posy): Personaje("O-Ren", posx, posy, 5), distanciaAmenaza(200.0f),
     distanciaRetroceder(80.0f),
     velocidad(120.0f),
-    acumTiempo(0)
+    acumTiempo(0.0f),acumSprite(0.0f)
 {
     seccionarSpritesheet(":/sprites/o-ren.png");
     actualizarSprite();
@@ -20,16 +20,34 @@ void Oren::paint(QPainter *painter,
                  const QStyleOptionGraphicsItem *option,
                  QWidget *widget)
 {
-    painter->drawRect(0,0,128,128);
     painter->drawPixmap(0, 0,spriteActual);
+
+    if(estado == Estado::Atacando)
+    {
+        painter->setPen(Qt::red);
+        painter->drawRect(getHitboxAtaque());
+    }
+    painter->setPen(Qt::blue);
     painter->drawRect(getZonaMen());
     painter->drawRect(getZonaDo());
     painter->drawRect(getZonaKote());
+    painter->setPen(Qt::green);
+    painter->drawRect(getHitboxCuerpo());
 }
 void Oren::actualizar(float dt)
 {
     acumTiempo += dt;
+    acumSprite += dt;
 
+    if(cooldownAtaque)
+    {
+        tiempoCooldown += dt;
+        if(tiempoCooldown > 1.0f)
+        {
+            cooldownAtaque = false;
+            tiempoCooldown = 0;
+        }
+    }
     if(acumTiempo >= 0.2f)
     {
         acumTiempo = 0;
@@ -47,17 +65,29 @@ void Oren::actualizar(float dt)
             }
         }
     }
-
+    actualizarMovimiento(dt);
+    actualizarAnimacion(dt);
     actualizarSprite();
 }
 void Oren::decidirAccion(Personaje* jugador)
 {
-    float dx = jugador->getPosx() - this->posx;
+    Bride* b = dynamic_cast<Bride*>(jugador);
+    if(!b) return;
+
+    float dx = b->getPosx() - posx;
     float distancia = std::abs(dx);
 
-    dirActual = (dx > 0)? Direccion::Derecha: Direccion::Izquierda;
-
-    if(distancia < distanciaRetroceder)
+    bool brideAtacando = (b->getEstado() == Estado::Atacando);
+    dirActual = (dx > 0) ? Direccion::Derecha : Direccion::Izquierda;
+    if(cooldownAtaque)
+    {
+        accionActual = Accion::Esperar;
+        zonaActual = ZonaAtaque::Inicial;
+        estado = Estado::Quieto;
+        velx = 0;
+        return;
+    }
+    if(brideAtacando && distancia < 140)
     {
         velx = (dx > 0 ? -velocidad : velocidad);
         estado = Estado::Moviendose;
@@ -73,6 +103,8 @@ void Oren::decidirAccion(Personaje* jugador)
         if(r == 0) iniciarAtaque(ZonaAtaque::Men);
         else if(r == 1) iniciarAtaque(ZonaAtaque::Do);
         else iniciarAtaque(ZonaAtaque::Kote);
+        cooldownAtaque = true;
+        tiempoCooldown = 0;
 
         return;
     }
@@ -100,5 +132,28 @@ void Oren::recibirGolpe()
     frameActual = 0;
 
     actualizarSprite();
+}
+
+void Oren::actualizarMovimiento(float dt)
+{
+    posx += velx * dt;
+    setPos(posx, posy);
+}
+
+void Oren::actualizarAnimacion(float dt)
+{
+    acumSprite += dt;
+
+    if(acumSprite < 0.15f)
+        return;
+
+    acumSprite = 0;
+
+    QVector<QPixmap>* frames = obtenerSpriteActual();
+
+    if(!frames || frames->isEmpty())
+        return;
+
+    frameActual = (frameActual + 1) % frames->size();
 }
 

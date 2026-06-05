@@ -87,7 +87,9 @@ public:
     QRectF getZonaMen() const;
     QRectF getZonaDo() const;
     QRectF getZonaKote() const;
+    Estado getEstado() const;
     virtual ~Personaje();
+
 
 };
 #endif // PERSONAJE_H

@@ -172,6 +172,8 @@ void Bride::recibirGolpe()
 {
     contZanshin = 0;
     zanshinEspecialActivo = false;
+    estado = Estado::Golpeado;
+    frameActual = 0;
     emit zanshinEspecialterminado();
     emit zanshinActualizado(getContZanshin());
 }
