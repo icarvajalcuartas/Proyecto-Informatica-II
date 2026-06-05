@@ -20,6 +20,7 @@ public:
     Nivel(unsigned short int numero, QGraphicsScene* escena);
     void cargar();
     void inputJugador(QKeyEvent* evento);
+    void inputJugadorLiberada(QKeyEvent *evento);
     void actualizar(float dt);
     void verificarColisiones();
     bool getTerminado() const;

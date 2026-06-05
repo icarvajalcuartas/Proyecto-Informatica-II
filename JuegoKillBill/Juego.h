@@ -6,6 +6,7 @@
 #include <QMediaPlayer>
 #include <QAudioOutput>
 #include <QVector>
+#include "Nivel.h"
 
 enum class EstadoJuego
 {
@@ -26,8 +27,9 @@ private:
     QTimer * timer;
     QMediaPlayer *reproductor;
     QAudioOutput *salidaAudio;
+    QVector<Nivel*> niveles;
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 public:
     Juego();
     void inicialNivel(unsigned short int nivel);
@@ -35,6 +37,7 @@ public:
     unsigned short int getNivelActual() const;
     QGraphicsScene* getEscena() const;
     void reproducirMusica(const QString& ruta);
+    ~Juego();
 private slots:
     void actualizarJuego();
 };

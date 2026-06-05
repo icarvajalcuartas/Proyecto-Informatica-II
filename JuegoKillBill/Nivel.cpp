@@ -7,7 +7,7 @@ void Nivel::cargar()
 {
     bride = new Bride(100,300);
     escena->addItem(bride);
-    bride->setPos(100,100);
+    //bride->setPos(100,100);
 }
 
 void Nivel::inputJugador(QKeyEvent *evento)
@@ -39,6 +39,20 @@ void Nivel::inputJugador(QKeyEvent *evento)
 
     case Qt::Key_L:
         bride->ataqueKote();
+        break;
+    }
+}
+
+void Nivel::inputJugadorLiberada(QKeyEvent *evento)
+{
+    if(!bride)
+        return;
+
+    switch(evento->key())
+    {
+    case Qt::Key_A:
+    case Qt::Key_D:
+        bride->detenerMovimiento();
         break;
     }
 }
