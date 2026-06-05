@@ -22,22 +22,18 @@ protected:
             {
             case Qt::Key_A:
                 bride->moverIzquierda();
-                bride->actualizar(0.16f);
                 break;
 
             case Qt::Key_D:
                 bride->moverDerecha();
-                bride->actualizar(0.16f);
                 break;
 
             case Qt::Key_Space:
                 bride->saltar();
-                bride->actualizar(0.16f);
                 break;
 
             case Qt::Key_J:
                 bride->ataqueMen();
-                bride->actualizar(0.16f);
                 break;
             }
         }

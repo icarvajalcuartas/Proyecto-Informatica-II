@@ -25,14 +25,14 @@ void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion dir
              << hojaSprites.height();
     QVector<QPixmap>* frames = new QVector<QPixmap>();
     frames->reserve(numFrames);
+    qDebug()
+        << "Fila:" << fila
+        << "Estado:" << static_cast<int>(estado)
+        << "Direccion:" << static_cast<int>(direccion)
+        << "Zona:" << static_cast<int>(zona);
 
     for (unsigned short int i=0; i<numFrames; ++i){
-        qDebug() << "fila:" << fila;
-        qDebug() << "numFrames:" << numFrames;
-        qDebug() << "frameAncho:" << frameAncho;
-        qDebug() << "frameAlto:" << frameAlto;
         QPixmap frame= hojaSprites.copy(i*frameAncho, fila*frameAlto, frameAncho, frameAlto);
-        qDebug() << "Frame creado:"<< frame.width()<< frame.height();
         frames->append(frame);
     }
 
@@ -48,7 +48,11 @@ void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion dir
 
 QVector<QPixmap> *Personaje::obtenerSpriteActual() {
     AnimacionKey key{ estado, dirActual, zonaActual };
-
+    qDebug()
+        << "Buscando:"
+        << "Estado" << static_cast<int>(estado)
+        << "Direccion" << static_cast<int>(dirActual)
+        << "Zona" << static_cast<int>(zonaActual);
     auto it = sprites.find(key);
     if(it != sprites.end()){
         qDebug() << "Animacion encontrada";

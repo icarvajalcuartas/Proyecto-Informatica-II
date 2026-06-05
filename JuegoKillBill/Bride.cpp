@@ -30,45 +30,90 @@ void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Bride::actualizar(float difTiempo)
 {
-    if (zanshinEspecialActivo){
+    qDebug() << "Actualizar estado:" << static_cast<int>(estado);
+    actualizarZanshin(difTiempo);
+    // actualizarEstadosAtaque(difTiempo);
+    actualizarMovimiento(difTiempo);
+    actualizarAnimacion(difTiempo);
+    actualizarSprite();
+}
 
-        tiempoZanshinEspecial -= difTiempo;
-        if(tiempoZanshinEspecial <=0){
+void Bride::actualizarZanshin(float dt)
+{
+    if(!zanshinEspecialActivo)
+        return;
 
-            zanshinEspecialActivo = false;
-            tiempoZanshinEspecial = 0.0f;
-            contZanshin = 0;
-            emit zanshinEspecialterminado();
-            emit zanshinActualizado(getContZanshin());
+    tiempoZanshinEspecial -= dt;
+
+    if(tiempoZanshinEspecial <= 0)
+    {
+        zanshinEspecialActivo = false;
+        tiempoZanshinEspecial = 0.0f;
+        contZanshin = 0;
+
+        emit zanshinEspecialterminado();
+        emit zanshinActualizado(contZanshin);
+    }
+}
+
+
+void Bride::actualizarMovimiento(float dt)
+{
+    switch(fisicaActual)
+    {
+    case ModoFisica::Uniforme:
+        movRectilineo(dt);
+        break;
+
+    case ModoFisica::Parabolica:
+        movParabolico(dt);
+        break;
+
+    case ModoFisica::dos5Dimensiones:
+        movDosDimensiones(dt);
+        break;
+
+    case ModoFisica::SaltoY:
+        movSaltoY(dt);
+        break;
+    }
+}
+
+void Bride::actualizarAnimacion(float dt)
+{
+    tiempoAnimacion += dt;
+
+    if(tiempoAnimacion < DURACION_FRAME)
+        return;
+
+    tiempoAnimacion -= DURACION_FRAME;
+
+    QVector<QPixmap>* frames = obtenerSpriteActual();
+
+    if(!frames || frames->isEmpty())
+        return;
+
+    if(estado == Estado::Atacando)
+    {
+        qDebug() << "Frame ataque:" << frameActual;
+        frameActual++;
+
+        if(frameActual >= frames->size())
+        {
+            frameActual = 0;
+            zonaActual = ZonaAtaque::Inicial;
+            qDebug() << "Ataque terminado";
+
+            if(velx != 0)
+                estado = Estado::Moviendose;
+            else
+                estado = Estado::Quieto;
         }
     }
-    switch(fisicaActual){
-    case (ModoFisica::Uniforme):{
-        movRectilineo();
-        break;
-    }
-    case (ModoFisica::Parabolica):{
-        movParabolico(difTiempo);
-        break;
-    }
-    case (ModoFisica::dos5Dimensiones):{
-        movDosDimensiones(difTiempo);
-        break;
-    }
-    case (ModoFisica::SaltoY):{
-        movSaltoY(difTiempo);
-        break;
-    }
-    }
-
-    tiempoAnimacion += difTiempo;
-
-    if(tiempoAnimacion >= DURACION_FRAME)
+    else
     {
         avanzarFrame();
-        tiempoAnimacion -= DURACION_FRAME;
     }
-    actualizarSprite();
 }
 QRectF Bride::getHitboxAtaque() const
 {
@@ -146,8 +191,27 @@ void Bride::input()
 
 void Bride::iniciarAtaque(ZonaAtaque zona)
 {
+    if(estado == Estado::Atacando)
+        return;
     zonaActual=zona;
     estado=Estado::Atacando;
+
+    frameActual = 0;
+    actualizarSprite();
+}
+void Bride::ataqueMen()
+{
+    iniciarAtaque(ZonaAtaque::Men);
+}
+
+void Bride::ataqueDo()
+{
+    iniciarAtaque(ZonaAtaque::Do);
+}
+
+void Bride::ataqueKote()
+{
+    iniciarAtaque(ZonaAtaque::Kote);
 }
 
 void Bride::registrarZanshin(ZonaAtaque zona)
@@ -155,25 +219,33 @@ void Bride::registrarZanshin(ZonaAtaque zona)
     if(ultimoAtaquevalido==zona){
 
         contZanshin=0;
-    }else{
+    }
+    else{
 
         contZanshin++;
-
-        if (contZanshin >= 3 && !zanshinEspecialActivo){
-            zanshinEspecialActivo = true;
-            tiempoZanshinEspecial = DUR_ZANSHINESPECIAL;
-
-            emit zanshinEspecialIniciado();
-            emit zanshinActualizado(getContZanshin());
-
-        }
     }
     ultimoAtaquevalido = zona;
+    emit zanshinActualizado(getContZanshin());
+
+    if (contZanshin >= 3 && !zanshinEspecialActivo){
+        zanshinEspecialActivo = true;
+        tiempoZanshinEspecial = DUR_ZANSHINESPECIAL;
+
+        emit zanshinEspecialIniciado();
+    }
 }
 
-void Bride::movRectilineo()
+void Bride::falloAtaque()
 {
-    posx += velx;
+    contZanshin = 0;
+    ultimoAtaquevalido = ZonaAtaque::Inicial;
+    emit zanshinActualizado(contZanshin);
+
+}
+
+void Bride::movRectilineo(float difTiempo)
+{
+    posx += velx * difTiempo;
     setPos(posx, posy);
 }
 
@@ -235,8 +307,13 @@ void Bride::saltar()
     if(enSuelo){
         vely = -FUERZA_SALTO;
         velx=0;
+        qDebug() << "ANTES:" << static_cast<int>(estado);
+
         estado = Estado::Saltando;
+
+        qDebug() << "DESPUES:" << static_cast<int>(estado);
         fisicaActual = ModoFisica::SaltoY;
+        qDebug() << "Direccion:" << static_cast<int>(dirActual);
         enSuelo=false;
     }
 }
@@ -303,25 +380,10 @@ void Bride::detenerMovimiento()
     zonaActual= ZonaAtaque::Inicial;
     velx=0;
     frameActual=0;
+    tiempoAnimacion = 0;
     actualizarSprite();
 }
 
-void Bride::ataqueMen()
-{
-    estado = Estado::Atacando;
-    zonaActual = ZonaAtaque::Men;
-}
 
-void Bride::ataqueDo()
-{
-    estado = Estado::Atacando;
-    zonaActual = ZonaAtaque::Do;
-}
-
-void Bride::ataqueKote()
-{
-    estado = Estado::Atacando;
-    zonaActual = ZonaAtaque::Kote;
-}
 
 

@@ -34,6 +34,16 @@ int main(int argc, char *argv[])
     //prueba de perifericos
     Test* input = new Test(bride);
     ventana->installEventFilter(input);
+    QTimer* timer = new QTimer();
+
+    QObject::connect(timer,
+                     &QTimer::timeout,
+                     [=]()
+                     {
+                         bride->actualizar(0.016f);
+                     });
+
+    timer->start(16);
     // fin prueba perifericos
 
     ventana->show();
