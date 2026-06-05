@@ -40,6 +40,9 @@ public:
     ~Juego();
 private slots:
     void actualizarJuego();
+signals:
+    void juegoTerminadoVictoria();
+    void juegoTerminadoDerrota();
 };
 
 #endif // JUEGO_H

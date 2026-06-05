@@ -26,6 +26,9 @@ bool Juego::eventFilter(QObject *obj, QEvent *event)
 }
 void Juego::actualizarJuego()
 {
+    if(estadoJuegoActual == EstadoJuego::Victoria ||
+        estadoJuegoActual == EstadoJuego::Derrota)
+        return;
     if(nivelActual < niveles.size())
     {
         niveles[nivelActual]->actualizar(0.016f);
@@ -51,6 +54,31 @@ void Juego::inicialNivel(unsigned short nivel)
     escena->clear();
     nivelActual = nivel;
     niveles[nivelActual]->cargar();
+    connect(niveles[nivelActual], &Nivel::victoria, this, [this](){ cambiarEstado(EstadoJuego::Victoria); });
+    connect(niveles[nivelActual], &Nivel::derrota,  this, [this](){ cambiarEstado(EstadoJuego::Derrota);  });
+}
+
+void Juego::cambiarEstado(EstadoJuego nuevoEstado)
+{
+    estadoJuegoActual = nuevoEstado;
+
+    switch(nuevoEstado)
+    {
+    case EstadoJuego::Victoria:
+        timer->stop();
+        escena->clear();
+        emit juegoTerminadoVictoria();
+        break;
+
+    case EstadoJuego::Derrota:
+        timer->stop();
+        escena->clear();
+        emit juegoTerminadoDerrota();
+        break;
+
+    default:
+        break;
+    }
 }
 
 unsigned short int Juego::getNivelActual() const
