@@ -26,7 +26,8 @@ private:
     QTimer * timer;
     QMediaPlayer *reproductor;
     QAudioOutput *salidaAudio;
-
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
 public:
     Juego();
     void inicialNivel(unsigned short int nivel);
