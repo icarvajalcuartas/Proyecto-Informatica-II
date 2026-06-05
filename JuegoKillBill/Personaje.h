@@ -61,8 +61,8 @@ public:
     ZonaAtaque detectarZonaAtaque(QRectF &golpe);
     virtual void actualizar(float difTiempo)=0;
     virtual void iniciarAtaque(ZonaAtaque zona)=0;
-    virtual QRectF getHitboxAtaque()const=0;
-    virtual QRectF getHitboxCuerpo() const = 0;
+    QRectF getHitboxAtaque() const;
+    QRectF getHitboxCuerpo() const;
     virtual void recibirGolpe()=0;
     void seccionarSpritesheet(const QString& ruta);
     void setVelx(float vx);

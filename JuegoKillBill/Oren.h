@@ -15,12 +15,11 @@ private:
     void decidirAccion(Personaje* jugador);
 public:
     Oren(float posx, float posy);
+    QRectF boundingRect() const override;
     void paint(QPainter* painter,const QStyleOptionGraphicsItem* option,QWidget* widget) override;
     void actualizar(float difTiempo) override;
     void iniciarAtaque(ZonaAtaque zona) override;
-    QRectF getHitboxAtaque() const override;
-    QRectF getHitboxCuerpo() const override;
-    void recibirGolpe() override;
+    virtual void recibirGolpe() override;
 
 
 };

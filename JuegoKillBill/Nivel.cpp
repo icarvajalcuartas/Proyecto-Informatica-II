@@ -5,9 +5,23 @@ Nivel::Nivel(unsigned short int numero, QGraphicsScene *escena): numeroNivel(num
 
 void Nivel::cargar()
 {
-    bride = new Bride(100,300);
+    bride = new Bride(600,300);
+    oren = new Oren(300,300);
     escena->addItem(bride);
-    //bride->setPos(100,100);
+    escena->addItem(oren);
+    connect(bride, &Bride::zanshinActualizado,this, [](unsigned short c){
+                qDebug() << "Zanshin:" << c;
+    });
+
+    connect(bride, &Bride::zanshinEspecialIniciado,
+            this, [](){qDebug() << "Zanshin especial ACTIVADO";
+            });
+
+    connect(bride, &Bride::zanshinEspecialterminado,
+            this, [](){
+                qDebug() << "Zanshin terminado";
+            });
+
 }
 
 void Nivel::inputJugador(QKeyEvent *evento)
@@ -60,15 +74,50 @@ void Nivel::inputJugadorLiberada(QKeyEvent *evento)
 void Nivel::actualizar(float dt)
 {
 
-    if(bride)
-        bride->actualizar(dt);
-
+    if(bride) bride->actualizar(dt);
+    if(oren) oren->actualizar(dt);
 
     verificarColisiones();
 
 }
 void Nivel::verificarColisiones()
 {
-    //if(!bride || !oren)
+    if(!bride || !oren)
         return;
+    if(!bride || !oren)
+        return;
+
+    QRectF ataqueBride = bride->getHitboxAtaque();
+    QRectF bodyOren = oren->getHitboxCuerpo();
+
+    QRectF ataqueOren = oren->getHitboxAtaque();
+    QRectF bodyBride = bride->getHitboxCuerpo();
+
+
+    if(ataqueBride.intersects(bodyOren))
+    {
+        puntosBride++;
+        oren->recibirGolpe();
+
+        bride->registrarZanshin(oren->getZonaActual());
+    }
+
+
+    if(ataqueOren.intersects(bodyBride))
+    {
+        puntosOren++;
+        bride->recibirGolpe();
+    }
+
+    if(puntosBride >= MAX_PUNTOS)
+    {
+        emit victoria();
+        return;
+    }
+
+    if(puntosOren >= MAX_PUNTOS)
+    {
+        emit derrota();
+        return;
+    }
 }

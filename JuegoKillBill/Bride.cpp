@@ -13,7 +13,7 @@ Bride::Bride(float posx, float posy):Personaje("The Bride",posx,posy,5),
     actualizarSprite();
 }
 
-QRectF Bride::boundingRect() const {return QRectF(0,0,128,128);}
+QRectF Bride::boundingRect() const {return QRectF(0, 0,128,128);}
 
 void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -21,11 +21,19 @@ void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     qDebug() << "sprite nulo:" << spriteActual.isNull();
     qDebug() << spriteActual.width()
              << spriteActual.height();
-    painter->drawRect(0,0,128,128);
-    painter->drawPixmap(0,0,spriteActual);
+    painter->drawPixmap(0, 0,spriteActual);
+
+    if(estado == Estado::Atacando)
+    {
+        painter->setPen(Qt::red);
+        painter->drawRect(getHitboxAtaque());
+    }
+    painter->setPen(Qt::blue);
     painter->drawRect(getZonaMen());
     painter->drawRect(getZonaDo());
     painter->drawRect(getZonaKote());
+    painter->setPen(Qt::green);
+    painter->drawRect(getHitboxCuerpo());
 }
 
 void Bride::actualizar(float difTiempo)
@@ -110,45 +118,25 @@ void Bride::actualizarAnimacion(float dt)
                 estado = Estado::Quieto;
         }
     }
+    else if(estado == Estado::Golpeado)
+    {
+        tiempoAnimacion += dt;
+
+        if(tiempoAnimacion > 0.3f)
+        {
+            estado = Estado::Quieto;
+            tiempoAnimacion = 0;
+            frameActual = 0;
+        }
+    }
     else
     {
         avanzarFrame();
     }
 }
-QRectF Bride::getHitboxAtaque() const
-{
-    if(estado != Estado::Atacando)
-        return QRectF();
 
-    switch(zonaActual)
-    {
-    case ZonaAtaque::Men:
-        return mapRectToScene(QRectF(90,0,80,40));
 
-    case ZonaAtaque::Do:
-        return mapRectToScene(QRectF(90,40,80,30));
 
-    case ZonaAtaque::Kote:
-        return mapRectToScene(QRectF(90,75,80,25));
-
-    default:
-        return QRectF();
-    }
-}
-
-QRectF Bride::getHitboxCuerpo() const
-{
-    return mapRectToScene(QRectF(25,5,70,100));
-}
-
-void Bride::sumarPunto()
-{
-    puntaje++;
-
-    if(puntaje>=5){
-        emit victoria();
-    }
-}
 
 void Bride::setModoFisica(ModoFisica modo)
 {

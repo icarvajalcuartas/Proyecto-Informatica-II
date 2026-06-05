@@ -28,14 +28,11 @@ public:
     //Bride(const Bride& copiaBride);
     QRectF boundingRect() const override;
     void paint(QPainter* painter,const QStyleOptionGraphicsItem* option,QWidget* widget) override;
-    virtual QRectF getHitboxAtaque() const override;
-    virtual QRectF getHitboxCuerpo() const override;
     void actualizar(float difTiempo) override;
     void actualizarZanshin (float dt);
     // void actualizarEstadosAtaque(float dt);
     void actualizarMovimiento (float dt);
     void actualizarAnimacion (float dt);
-    void sumarPunto();
     void setModoFisica(ModoFisica modo);
     void setDireccion(Direccion dir);
     void setEnSuelo(bool suelo);
