@@ -62,6 +62,7 @@ public:
     virtual void actualizar(float difTiempo)=0;
     virtual void iniciarAtaque(ZonaAtaque zona)=0;
     virtual QRectF getHitboxAtaque()const=0;
+    virtual QRectF getHitboxCuerpo() const = 0;
     virtual void recibirGolpe()=0;
     void seccionarSpritesheet(const QString& ruta);
     void setVelx(float vx);
@@ -82,6 +83,7 @@ public:
     unsigned short int getVida() const;
     bool getActivo() const;
     QString getNombre() const;
+    ZonaAtaque getZonaActual() const;
     QRectF getZonaMen() const;
     QRectF getZonaDo() const;
     QRectF getZonaKote() const;

@@ -29,6 +29,7 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter* painter,const QStyleOptionGraphicsItem* option,QWidget* widget) override;
     virtual QRectF getHitboxAtaque() const override;
+    virtual QRectF getHitboxCuerpo() const override;
     void actualizar(float difTiempo) override;
     void actualizarZanshin (float dt);
     // void actualizarEstadosAtaque(float dt);

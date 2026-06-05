@@ -59,7 +59,16 @@ void Nivel::inputJugadorLiberada(QKeyEvent *evento)
 
 void Nivel::actualizar(float dt)
 {
-    if (bride){
+
+    if(bride)
         bride->actualizar(dt);
-    }
+
+
+    verificarColisiones();
+
+}
+void Nivel::verificarColisiones()
+{
+    //if(!bride || !oren)
+        return;
 }
