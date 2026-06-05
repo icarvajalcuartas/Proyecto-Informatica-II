@@ -2,5 +2,6 @@
     <qresource prefix="/sprites">
         <file>thebride.png</file>
         <file>thebride_2.png</file>
+        <file>o-ren.png</file>
     </qresource>
 </RCC>
