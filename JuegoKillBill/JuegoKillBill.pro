@@ -40,4 +40,5 @@ DISTFILES += \
     thebride.png
 
 RESOURCES += \
+    audio.qrc \
     sprites.qrc

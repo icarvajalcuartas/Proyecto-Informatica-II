@@ -23,26 +23,32 @@ class Juego: public QObject
 private:
     unsigned short int nivelActual;
     EstadoJuego estadoJuegoActual;
-    QGraphicsScene* escena;
+    QGraphicsView* vista;
+    QGraphicsScene* escenaMenu;
+    QGraphicsScene* escenaJuego;
     QTimer * timer;
-    QMediaPlayer *reproductor;
-    QAudioOutput *salidaAudio;
+    QMediaPlayer* musicaMenu;
+    QAudioOutput* salidaMenu;
+    QMediaPlayer* musicaNivel;
+    QAudioOutput* salidaNivel;
     QVector<Nivel*> niveles;
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 public:
     Juego();
+    void iniciarMenu(QGraphicsView* ventana);
     void inicialNivel(unsigned short int nivel);
-    void cambiarEstado(EstadoJuego nuevoEstado);
     unsigned short int getNivelActual() const;
-    QGraphicsScene* getEscena() const;
-    void reproducirMusica(const QString& ruta);
     ~Juego();
 private slots:
     void actualizarJuego();
+
+public slots:
+    void cambiarEstado(EstadoJuego nuevoEstado);
 signals:
     void juegoTerminadoVictoria();
     void juegoTerminadoDerrota();
+    void cambiarEscena(QGraphicsScene* escena);
 };
 
 #endif // JUEGO_H

@@ -17,14 +17,17 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     qDebug() << QDir::currentPath();
-    //ventana
+
     Juego *juego = new Juego();
-    QGraphicsView* ventana=new QGraphicsView(juego->getEscena());
+    QGraphicsView* ventana=new QGraphicsView();
     ventana->resize(1200,630);
     ventana->installEventFilter(juego);
     ventana->setWindowTitle("Kill Bill Kendo");
-    //fin ventana
+    ventana->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ventana->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ventana->show();
+    juego->iniciarMenu(ventana);
+
     return a.exec();
 }
