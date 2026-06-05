@@ -16,7 +16,7 @@ private:
     bool enSuelo;
     const float FUERZA_SALTO = 500.0f;
     const float FUERZA_HORIZONTAL = 50.0f;
-    void movRectilineo();
+    void movRectilineo(float difTiempo);
     void movSaltoY(float difTiempo);
     void movParabolico(float difTiempo);
     void movDosDimensiones(float difTiempo);
@@ -28,8 +28,12 @@ public:
     //Bride(const Bride& copiaBride);
     QRectF boundingRect() const override;
     void paint(QPainter* painter,const QStyleOptionGraphicsItem* option,QWidget* widget) override;
-    void actualizar(float difTiempo) override;
     virtual QRectF getHitboxAtaque() const override;
+    void actualizar(float difTiempo) override;
+    void actualizarZanshin (float dt);
+    // void actualizarEstadosAtaque(float dt);
+    void actualizarMovimiento (float dt);
+    void actualizarAnimacion (float dt);
     void sumarPunto();
     void setModoFisica(ModoFisica modo);
     void setDireccion(Direccion dir);
@@ -39,6 +43,7 @@ public:
     void input();
     void iniciarAtaque(ZonaAtaque zona)override;
     void registrarZanshin(ZonaAtaque zona);
+    void falloAtaque();
 
     bool getEnSuelo() const;
     bool getZanshinEspecialActivo() const;
