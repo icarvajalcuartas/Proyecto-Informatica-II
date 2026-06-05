@@ -136,6 +136,11 @@ QRectF Bride::getHitboxAtaque() const
     }
 }
 
+QRectF Bride::getHitboxCuerpo() const
+{
+    return mapRectToScene(QRectF(25,5,70,100));
+}
+
 void Bride::sumarPunto()
 {
     puntaje++;

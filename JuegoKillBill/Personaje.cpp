@@ -187,6 +187,7 @@ float Personaje::getAlto() const{return alto;}
 unsigned short Personaje::getVida() const{return vida;}
 bool Personaje::getActivo() const{return activo;}
 QString Personaje::getNombre() const{return nombre;}
+ZonaAtaque Personaje::getZonaActual() const{return zonaActual;}
 QRectF Personaje::getZonaMen() const{return zonaMenLocal;}
 QRectF Personaje::getZonaDo() const{return zonaDoLocal;}
 QRectF Personaje::getZonaKote() const{return zonaKoteLocal;}
