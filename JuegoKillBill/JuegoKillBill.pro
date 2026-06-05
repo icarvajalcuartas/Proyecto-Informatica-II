@@ -13,6 +13,7 @@ SOURCES += \
     Bride.cpp \
     Juego.cpp \
     Nivel.cpp \
+    Oren.cpp \
     Personaje.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -22,6 +23,7 @@ HEADERS += \
     Bride.h \
     Juego.h \
     Nivel.h \
+    Oren.h \
     Personaje.h \
     mainwindow.h \
     test.h

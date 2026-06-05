@@ -88,8 +88,6 @@ public:
     QRectF getZonaDo() const;
     QRectF getZonaKote() const;
     virtual ~Personaje();
-signals:
-    void derrota();
-    void victoria();
+
 };
 #endif // PERSONAJE_H
