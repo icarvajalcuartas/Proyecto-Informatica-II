@@ -87,11 +87,12 @@ void Nivel::verificarColisiones()
     if(!bride || !oren)
         return;
 
-    QRectF ataqueBride = bride->getHitboxAtaque();
-    QRectF bodyOren = oren->getHitboxCuerpo();
+    QRectF ataqueBride = bride->mapToScene(bride->getHitboxAtaque()).boundingRect();
+    QRectF bodyOren = oren->mapToScene(oren->getHitboxCuerpo()).boundingRect();
 
-    QRectF ataqueOren = oren->getHitboxAtaque();
-    QRectF bodyBride = bride->getHitboxCuerpo();
+
+    QRectF ataqueOren = oren->mapToScene(oren->getHitboxAtaque()).boundingRect();
+    QRectF bodyBride = bride->mapToScene(bride->getHitboxCuerpo()).boundingRect();
 
 
     if(ataqueBride.intersects(bodyOren))

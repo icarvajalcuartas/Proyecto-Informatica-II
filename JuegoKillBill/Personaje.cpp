@@ -48,6 +48,11 @@ void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion dir
     sprites.insert(key,frames);
 }
 
+Estado Personaje::getEstado() const
+{
+    return estado;
+}
+
 QVector<QPixmap> *Personaje::obtenerSpriteActual() {
     AnimacionKey key{ estado, dirActual, zonaActual };
     qDebug()
