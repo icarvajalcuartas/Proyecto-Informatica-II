@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     Bride.cpp \
+    Juego.cpp \
     Personaje.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
 
 HEADERS += \
     Bride.h \
+    Juego.h \
     Personaje.h \
     mainwindow.h \
     test.h
