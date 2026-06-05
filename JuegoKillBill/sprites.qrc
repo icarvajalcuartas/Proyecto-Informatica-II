@@ -4,4 +4,10 @@
         <file>thebride_2.png</file>
         <file>o-ren.png</file>
     </qresource>
+    <qresource prefix="/audio">
+        <file>Bangbang.mp3</file>
+    </qresource>
+    <qresource prefix="/fondo">
+        <file>fondomenu.png</file>
+    </qresource>
 </RCC>
