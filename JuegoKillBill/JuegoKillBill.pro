@@ -1,4 +1,5 @@
 QT       += core gui
+QT += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +11,7 @@ CONFIG += c++17
 
 SOURCES += \
     Bride.cpp \
+    Juego.cpp \
     Personaje.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -17,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     Bride.h \
+    Juego.h \
     Personaje.h \
     mainwindow.h \
     test.h
