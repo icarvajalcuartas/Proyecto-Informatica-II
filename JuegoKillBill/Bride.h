@@ -18,12 +18,14 @@ private:
     const float VEL_HORIZONTAL_PARABOLICO = 400.0f;
     const float GRAVEDAD_PARABOLICO   = 500.0f;
     const float SUELO_Y               = 400.0f;
+    float tiempoGolpe = 0.0f;
     void movRectilineo(float difTiempo);
     void movSaltoY(float difTiempo);
     void movParabolico(float difTiempo);
     void movDosDimensiones(float difTiempo);
     float tiempoAnimacion =0;
     const float DURACION_FRAME = 0.1f;
+    const float DURACION_GOLPE = 0.4f;
     ZonaAtaque ultimoAtaquevalido;
 public:
     Bride(float posx,float posy);

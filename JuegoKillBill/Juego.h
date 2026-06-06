@@ -26,6 +26,8 @@ private:
     QGraphicsView* vista;
     QGraphicsScene* escenaMenu;
     QGraphicsScene* escenaJuego;
+    QGraphicsScene* escenaCarga;
+    QGraphicsScene* escenaDerrota;
     QTimer * timer;
     QMediaPlayer* musicaMenu;
     QAudioOutput* salidaMenu;
