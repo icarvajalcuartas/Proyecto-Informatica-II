@@ -17,6 +17,8 @@ private:
     float acumTiempo;
     float acumSprite;
     Accion accionActual;
+    bool modoDebilitado = false;
+
 
     bool cooldownAtaque;
     float tiempoCooldown;
@@ -30,6 +32,8 @@ public:
     virtual void recibirGolpe() override;
     void actualizarMovimiento(float dt);
     void actualizarAnimacion(float dt);
+    void activarModoDebilitado();
+    void desactivarModoDebilitado();
 
 
 };
