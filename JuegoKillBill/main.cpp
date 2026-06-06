@@ -21,13 +21,19 @@ int main(int argc, char *argv[])
     Juego *juego = new Juego();
     QGraphicsView* ventana=new QGraphicsView();
     ventana->resize(1200,630);
-    ventana->installEventFilter(juego);
     ventana->setWindowTitle("Kill Bill Kendo");
     ventana->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ventana->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ventana->installEventFilter(juego);
 
-    ventana->show();
+    ventana->setScene(nullptr);
+    ventana->setRenderHint(QPainter::Antialiasing);
+    ventana->setSceneRect(0, 0, 1200, 630);
+    ventana->fitInView(0, 0, 1200, 630, Qt::IgnoreAspectRatio);
+
     juego->iniciarMenu(ventana);
+    ventana->show();
+
 
     return a.exec();
 }
