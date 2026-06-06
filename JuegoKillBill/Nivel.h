@@ -7,6 +7,10 @@
 #include <QGraphicsTextItem>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QSet>
+
+
+
 
 class Nivel:public QObject
 {
@@ -18,20 +22,24 @@ private:
     Oren* oren;
     unsigned short puntosBride = 0;
     unsigned short puntosOren = 0;
-    QString rutaFondo;
     bool terminado;
     bool colisionAtaqueBride = false;
     bool colisionAtaqueOren  = false;
     void verificarBordes();
     void verificarColisiones();
     void actualizarMarcador();
+    void verificarSolapamiento();
     const float BORDE_IZQUIERDO = 0.0f;
     const float BORDE_DERECHO   = 1072.0f;
-    const float SUELO           = 300.0f;
+    const float DISTANCIA_MINIMA = 90.0f;
+    const float POS_Y_PERSONAJES = 400.0f;
+    const float POS_X_BRIDE      = 600.0f;
+    const float POS_X_OREN       = 300.0f;
     QGraphicsTextItem* textoPuntosBride;
     QGraphicsTextItem* textoPuntosOren;
     QGraphicsTextItem* textoZanshin;
     const unsigned short MAX_PUNTOS = 5;
+    QSet<int> teclasActivas;
 public:
 
     Nivel(unsigned short int numero, QGraphicsScene* escena);

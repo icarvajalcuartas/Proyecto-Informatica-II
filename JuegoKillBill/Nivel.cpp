@@ -27,15 +27,13 @@ void Nivel::cargar()
     qDebug() << "Fondo nivel" << numeroNivel << "cargado:" << !fondoNivel.isNull();
     QGraphicsPixmapItem* itemFondo = escena->addPixmap(fondoNivel);
     itemFondo->setZValue(-1);
-    bride = new Bride(600,300);
-    oren = new Oren(300,300);
+    bride = new Bride(POS_X_BRIDE,POS_Y_PERSONAJES);
+    oren = new Oren(POS_X_OREN,POS_Y_PERSONAJES);
     escena->addItem(bride);
     escena->addItem(oren);
 
     QFont marcadorFuente("Arial", 18, QFont::Bold);
-    // connect(bride, &Bride::zanshinActualizado,this, [](unsigned short c){
-    //             qDebug() << "Zanshin:" << c;
-    // });
+
 
     textoPuntosBride = escena->addText("THE BRIDE: 0", marcadorFuente);
     textoPuntosBride->setDefaultTextColor(Qt::yellow);
@@ -106,6 +104,28 @@ void Nivel::inputJugador(QKeyEvent *evento)
     if(!bride)
         return;
 
+    teclasActivas.insert(evento->key());
+    if(bride->getZanshinEspecialActivo())
+    {
+        if(teclasActivas.contains(Qt::Key_Space) &&
+            teclasActivas.contains(Qt::Key_A))
+        {
+            bride->saltarIzquierda();
+            return;
+        }
+        if(teclasActivas.contains(Qt::Key_Space) &&
+            teclasActivas.contains(Qt::Key_D))
+        {
+            bride->saltarDerecha();
+            return;
+        }
+
+        if(evento->key() == Qt::Key_Space)
+        {
+            bride->saltar();
+            return;
+        }
+    }
     switch(evento->key())
     {
     case Qt::Key_A:
@@ -114,10 +134,6 @@ void Nivel::inputJugador(QKeyEvent *evento)
 
     case Qt::Key_D:
         bride->moverDerecha();
-        break;
-
-    case Qt::Key_Space:
-        bride->saltar();
         break;
 
     case Qt::Key_J:
@@ -138,7 +154,7 @@ void Nivel::inputJugadorLiberada(QKeyEvent *evento)
 {
     if(!bride)
         return;
-
+    teclasActivas.remove(evento->key());
     switch(evento->key())
     {
     case Qt::Key_A:
@@ -155,6 +171,7 @@ void Nivel::actualizar(float dt)
     if(oren) oren->actualizar(dt);
 
     verificarBordes();
+    verificarSolapamiento();
     verificarColisiones();
 
 }
@@ -219,6 +236,27 @@ void Nivel::actualizarMarcador()
         textoPuntosBride->setPlainText("THE BRIDE: " + QString::number(puntosBride));
     if(textoPuntosOren)
         textoPuntosOren->setPlainText("O-REN: " + QString::number(puntosOren));
+}
+
+void Nivel::verificarSolapamiento()
+{
+    if(!bride || !oren) return;
+    if(bride->getEstado() == Estado::Saltando) return;
+    float dx = bride->getPosx() - oren->getPosx();
+    float distancia = std::abs(dx);
+
+    if(distancia < DISTANCIA_MINIMA)
+    {
+        if(dx < 0)
+        {
+            bride->setPosx(oren->getPosx() - DISTANCIA_MINIMA);
+        }
+        else
+        {
+            bride->setPosx(oren->getPosx() + DISTANCIA_MINIMA);
+        }
+        bride->setVelx(0);
+    }
 }
 
 

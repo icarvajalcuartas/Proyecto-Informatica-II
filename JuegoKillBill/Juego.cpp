@@ -53,7 +53,7 @@ void Juego::iniciarMenu(QGraphicsView *ventana)
     qDebug() << "Paso 2: botonPlay creado";
     QGraphicsProxyWidget* proxyPlay = escenaMenu->addWidget(botonPlay);
     qDebug() << "Paso 3: proxyPlay agregado";
-    proxyPlay->setPos(700, 320);
+    proxyPlay->setPos(670, 320);
     qDebug() << "Paso 4: proxyPlay posicionado";
 
 
@@ -63,7 +63,7 @@ void Juego::iniciarMenu(QGraphicsView *ventana)
     botonLevel1->setCursor(Qt::PointingHandCursor);
     botonLevel1->setStyleSheet(botonPlay->styleSheet());
     QGraphicsProxyWidget* proxyLevel1 = escenaMenu->addWidget(botonLevel1);
-    proxyLevel1->setPos(500, 450);
+    proxyLevel1->setPos(500, 470);
     qDebug() << "Paso 5: proxyLevel1 posicionado";
 
 
@@ -72,7 +72,7 @@ void Juego::iniciarMenu(QGraphicsView *ventana)
     botonLevel2->setCursor(Qt::PointingHandCursor);
     botonLevel2->setStyleSheet(botonPlay->styleSheet());
     QGraphicsProxyWidget* proxyLevel2 = escenaMenu->addWidget(botonLevel2);
-    proxyLevel2->setPos(700, 450);
+    proxyLevel2->setPos(850, 460);
     qDebug() << "Paso 6: proxyLevel2 posicionado";
 
     connect(botonPlay, &QPushButton::clicked, this, [this](){
