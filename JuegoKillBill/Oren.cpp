@@ -37,7 +37,6 @@ void Oren::paint(QPainter *painter,
 void Oren::actualizar(float dt)
 {
     acumTiempo += dt;
-    acumSprite += dt;
 
     if(cooldownAtaque)
     {
@@ -97,12 +96,12 @@ void Oren::decidirAccion(Personaje* jugador)
     if(distancia < distanciaAmenaza)
     {
         velx = 0;
-
-        int r = QRandomGenerator::global()->bounded(3);
+        int limite = modoDebilitado ? 9 : 3;
+        int r = QRandomGenerator::global()->bounded(limite);
 
         if(r == 0) iniciarAtaque(ZonaAtaque::Men);
         else if(r == 1) iniciarAtaque(ZonaAtaque::Do);
-        else iniciarAtaque(ZonaAtaque::Kote);
+        else if(r == 2) iniciarAtaque(ZonaAtaque::Kote);
         cooldownAtaque = true;
         tiempoCooldown = 0;
 
@@ -155,5 +154,17 @@ void Oren::actualizarAnimacion(float dt)
         return;
 
     frameActual = (frameActual + 1) % frames->size();
+}
+
+void Oren::activarModoDebilitado()
+{
+    modoDebilitado = true;
+    velocidad = 60.0f;
+}
+
+void Oren::desactivarModoDebilitado()
+{
+    modoDebilitado = false;
+    velocidad = 120.0f;
 }
 
