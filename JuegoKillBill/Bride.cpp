@@ -17,10 +17,7 @@ QRectF Bride::boundingRect() const {return QRectF(0, 0,128,128);}
 
 void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    qDebug() << "paint ejecutado";
-    qDebug() << "sprite nulo:" << spriteActual.isNull();
-    qDebug() << spriteActual.width()
-             << spriteActual.height();
+
     painter->drawPixmap(0, 0,spriteActual);
 
     // if(estado == Estado::Atacando)
@@ -120,14 +117,15 @@ void Bride::actualizarAnimacion(float dt)
     }
     else if(estado == Estado::Golpeado)
     {
-        tiempoAnimacion += dt;
-
-        if(tiempoAnimacion > 0.3f)
+        tiempoGolpe += DURACION_FRAME;
+        if(tiempoAnimacion >= DURACION_GOLPE)
         {
             estado = Estado::Quieto;
-            tiempoAnimacion = 0;
             frameActual = 0;
+            tiempoAnimacion = 0;
+            tiempoGolpe = 0;
         }
+        avanzarFrame();
     }
     else
     {
@@ -174,6 +172,7 @@ void Bride::recibirGolpe()
     zanshinEspecialActivo = false;
     estado = Estado::Golpeado;
     frameActual = 0;
+    tiempoGolpe = 0;
     emit zanshinEspecialterminado();
     emit zanshinActualizado(getContZanshin());
 }

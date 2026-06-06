@@ -44,7 +44,6 @@ void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion dir
     {
         delete sprites[key];
     }
-    qDebug() << "Frames cargados:" << frames->size();
     sprites.insert(key,frames);
 }
 
@@ -55,11 +54,7 @@ Estado Personaje::getEstado() const
 
 QVector<QPixmap> *Personaje::obtenerSpriteActual() {
     AnimacionKey key{ estado, dirActual, zonaActual };
-    qDebug()
-        << "Buscando:"
-        << "Estado" << static_cast<int>(estado)
-        << "Direccion" << static_cast<int>(dirActual)
-        << "Zona" << static_cast<int>(zonaActual);
+
     auto it = sprites.find(key);
     if(it != sprites.end()){
         qDebug() << "Animacion encontrada";
@@ -77,15 +72,13 @@ void Personaje::avanzarFrame() {
     }
 }
 void Personaje::actualizarSprite() {
-    qDebug() << "actualizarSprite llamado";
+
     QVector<QPixmap>* frames = obtenerSpriteActual();
     if(frames && !frames->isEmpty()) {
         if(frameActual >= frames->size()){
             frameActual = 0;
         }
-        qDebug() << "frames encontrados:" << frames->size();
         spriteActual = frames->at(frameActual);
-        qDebug() << spriteActual.width()<< spriteActual.height();
         update();
     }
 }
@@ -126,15 +119,15 @@ QRectF Personaje::getHitboxAtaque() const
     switch(zonaActual)
     {
     case ZonaAtaque::Men:
-        hitbox = QRectF(0, 0, 30, 40);
+        hitbox = QRectF(0, 0, 30, 20);
         break;
 
     case ZonaAtaque::Do:
-        hitbox = QRectF(0, 40, 30, 40);
+        hitbox = QRectF(0, 40, 30, 20);
         break;
 
     case ZonaAtaque::Kote:
-        hitbox = QRectF(0, 80, 30, 40);
+        hitbox = QRectF(0, 80, 30, 20);
         break;
 
     default:

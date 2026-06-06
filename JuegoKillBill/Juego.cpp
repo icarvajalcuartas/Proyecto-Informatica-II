@@ -8,9 +8,10 @@ Juego::Juego() :nivelActual(0),estadoJuegoActual(EstadoJuego::Menu),vista(nullpt
 
     escenaMenu = new QGraphicsScene(this);
     escenaJuego = new QGraphicsScene(this);
+    escenaCarga  = new QGraphicsScene(this);
+    escenaDerrota = new QGraphicsScene(this);
+
     timer = new QTimer(this);
-    //niveles.append(new Nivel(1, escenaJuego));
-    // niveles.append(new Nivel(2, escenaJuego));
     connect(timer,&QTimer::timeout,this,&Juego::actualizarJuego);
     timer->start(16);
     musicaMenu  = new QMediaPlayer(this);
@@ -25,17 +26,14 @@ Juego::Juego() :nivelActual(0),estadoJuegoActual(EstadoJuego::Menu),vista(nullpt
     musicaNivel->setAudioOutput(salidaNivel);
     salidaNivel->setVolume(0.7f);
     musicaNivel->setLoops(QMediaPlayer::Infinite);
-    qDebug() << "Niveles creados:" << niveles.size();
 }
 
 void Juego::iniciarMenu(QGraphicsView *ventana)
 {
     vista = ventana;
     QPixmap fondo(":/fondo/fondomenu.png");
-    qDebug() << "Fondo menu cargado:" << !fondo.isNull();
     escenaMenu->addPixmap(fondo);
     escenaMenu->setSceneRect(0, 0, 1200, 630);
-    qDebug() << "Paso 1: fondo OK";
 
     QPushButton* botonPlay = new QPushButton();
     botonPlay->setFixedSize(150, 60);
@@ -50,11 +48,8 @@ void Juego::iniciarMenu(QGraphicsView *ventana)
         "  border-radius: 6px;"
         "}"
         );
-    qDebug() << "Paso 2: botonPlay creado";
     QGraphicsProxyWidget* proxyPlay = escenaMenu->addWidget(botonPlay);
-    qDebug() << "Paso 3: proxyPlay agregado";
     proxyPlay->setPos(670, 320);
-    qDebug() << "Paso 4: proxyPlay posicionado";
 
 
 
@@ -64,7 +59,6 @@ void Juego::iniciarMenu(QGraphicsView *ventana)
     botonLevel1->setStyleSheet(botonPlay->styleSheet());
     QGraphicsProxyWidget* proxyLevel1 = escenaMenu->addWidget(botonLevel1);
     proxyLevel1->setPos(500, 470);
-    qDebug() << "Paso 5: proxyLevel1 posicionado";
 
 
     QPushButton* botonLevel2 = new QPushButton();
@@ -73,7 +67,7 @@ void Juego::iniciarMenu(QGraphicsView *ventana)
     botonLevel2->setStyleSheet(botonPlay->styleSheet());
     QGraphicsProxyWidget* proxyLevel2 = escenaMenu->addWidget(botonLevel2);
     proxyLevel2->setPos(850, 460);
-    qDebug() << "Paso 6: proxyLevel2 posicionado";
+
 
     connect(botonPlay, &QPushButton::clicked, this, [this](){
         inicialNivel(0);
@@ -86,17 +80,10 @@ void Juego::iniciarMenu(QGraphicsView *ventana)
     connect(botonLevel2, &QPushButton::clicked, this, [this](){
         inicialNivel(1);
     });
-    qDebug() << "Paso 7: conexiones OK";
+
     vista->setScene(escenaMenu);
-    qDebug() << "SceneRect:" << escenaMenu->sceneRect();
-    qDebug() << "Items en escena:" << escenaMenu->items().size();
-    qDebug() << "Paso 8: escena asignada";
-    qDebug() << "Ruta musica menu:" << musicaMenu->source();
     musicaMenu->play();
-    qDebug() << "Estado reproductor:" << musicaMenu->playbackState();
-    qDebug() << "Paso 9: musica iniciada";
     estadoJuegoActual = EstadoJuego::Menu;
-    qDebug() << "Paso 10: estado Menu OK";
 
 
 }
@@ -140,41 +127,55 @@ void Juego::actualizarJuego()
 void Juego::inicialNivel(unsigned short nivel)
 {
     musicaMenu->stop();
+    escenaCarga->clear();
 
-    escenaJuego->clear();
-
-    Nivel* nuevoNivel = new Nivel(nivel + 1, escenaJuego);
-
-    if(nivelActual < (unsigned short)niveles.size())
-    {
-        delete niveles[nivelActual];
-        niveles[nivelActual] = nuevoNivel;
-    }
-    else
-    {
-        niveles.append(nuevoNivel);
-    }
-    nivelActual = nivel;
-    niveles[nivelActual]->cargar();
-
+    QPixmap imgCarga;
     if(nivel == 0)
-        musicaNivel->setSource(QUrl("qrc:/audio/Lonely.mp3"));
-    // else
-    //     musicaNivel->setSource(QUrl("qrc:/audio/nivel2.mp3"));
-    musicaNivel->play();
+        imgCarga = QPixmap(":/fondo/cargaNivel1.png");
+    else
+        imgCarga = QPixmap(":/fondo/cargaNivel2.png");
 
-    connect(niveles[nivelActual], &Nivel::victoria,
-            this, [this](){ cambiarEstado(EstadoJuego::Victoria); });
-    connect(niveles[nivelActual], &Nivel::derrota,
-            this, [this](){ cambiarEstado(EstadoJuego::Derrota); });
-
-    vista->setScene(escenaJuego);
-    vista->setSceneRect(0, 0, 1200, 630);
+    qDebug() << "Carga nivel" << nivel << "cargada:" << !imgCarga.isNull();
+    escenaCarga->addPixmap(imgCarga);
+    escenaCarga->setSceneRect(0, 0, 1200, 630);
+    vista->setScene(escenaCarga);
     ajustarVista();
-    estadoJuegoActual = (nivel == 0) ? EstadoJuego::Nivel1 : EstadoJuego::Nivel2;
+    QTimer::singleShot(2000, this, [this, nivel](){
+        escenaJuego->clear();
 
-    timer->start(16);
+        Nivel* nuevoNivel = new Nivel(nivel + 1, escenaJuego);
 
+        if(nivelActual < (unsigned short)niveles.size())
+        {
+            delete niveles[nivelActual];
+            niveles[nivelActual] = nuevoNivel;
+        }
+        else
+        {
+            niveles.append(nuevoNivel);
+        }
+        nivelActual = nivel;
+        niveles[nivelActual]->cargar();
+
+        connect(niveles[nivelActual], &Nivel::victoria,
+                this, [this](){ cambiarEstado(EstadoJuego::Victoria); });
+        connect(niveles[nivelActual], &Nivel::derrota,
+                this, [this](){ cambiarEstado(EstadoJuego::Derrota); });
+
+        vista->setScene(escenaJuego);
+        vista->setSceneRect(0, 0, 1200, 630);
+        ajustarVista();
+        estadoJuegoActual = (nivel == 0) ? EstadoJuego::Nivel1 : EstadoJuego::Nivel2;
+        timer->start(16);
+
+        disconnect(musicaNivel, nullptr, nullptr, nullptr);
+        musicaNivel->setLoops(QMediaPlayer::Infinite);
+
+        if(nivel == 0)
+            musicaNivel->setSource(QUrl("qrc:/audio/Lonely.wav"));
+
+        QTimer::singleShot(200, this, [this](){ musicaNivel->play(); });
+    });
 }
 
 void Juego::ajustarVista()
@@ -210,11 +211,44 @@ void Juego::cambiarEstado(EstadoJuego nuevoEstado)
         musicaNivel->stop();
         escenaJuego->clear();
 
-        QGraphicsScene* escenaFinal = new QGraphicsScene(this);
+        escenaDerrota->clear();
         QPixmap img(":/fondo/fondoDerrota.png");
-        escenaFinal->addPixmap(img);
-        escenaFinal->setSceneRect(0, 0, 1200, 630);
-        vista->setScene(escenaFinal);
+        escenaDerrota->addPixmap(img);
+        escenaDerrota->setSceneRect(0, 0, 1200, 630);
+
+        QPushButton* btnTryAgain = new QPushButton();
+        btnTryAgain->setFixedSize(230, 80);
+        btnTryAgain->setCursor(Qt::PointingHandCursor);
+        btnTryAgain->setStyleSheet(
+            "QPushButton { background-color: transparent; border: none; }"
+            "QPushButton:hover { background-color: rgba(255,255,255,40); border-radius:6px; }"
+            );
+        QGraphicsProxyWidget* proxyTry = escenaDerrota->addWidget(btnTryAgain);
+        proxyTry->setPos(380, 450);
+
+
+        QPushButton* btnMenu = new QPushButton();
+        btnMenu->setFixedSize(210, 80);
+        btnMenu->setCursor(Qt::PointingHandCursor);
+        btnMenu->setStyleSheet(btnTryAgain->styleSheet());
+        QGraphicsProxyWidget* proxyMenu = escenaDerrota->addWidget(btnMenu);
+        proxyMenu->setPos(650, 450);
+
+
+        connect(btnTryAgain, &QPushButton::clicked, this, [this](){
+            estadoJuegoActual = EstadoJuego::Menu;
+            inicialNivel(nivelActual);
+        });
+
+        connect(btnMenu, &QPushButton::clicked, this, [this](){
+            musicaNivel->stop();
+            estadoJuegoActual = EstadoJuego::Menu;
+            vista->setScene(escenaMenu);
+            ajustarVista();
+            musicaMenu->play();
+        });
+
+        vista->setScene(escenaDerrota);
         ajustarVista();
         break;
     }

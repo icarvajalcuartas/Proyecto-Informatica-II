@@ -1,9 +1,11 @@
 #include "Nivel.h"
-
+#include <QRandomGenerator>
 
 Nivel::Nivel(unsigned short int numero, QGraphicsScene *escena): numeroNivel(numero),
     escena(escena), bride(nullptr), oren(nullptr),terminado(false),textoPuntosBride(nullptr), textoPuntosOren(nullptr),
-    textoZanshin(nullptr){}
+    textoZanshin(nullptr),sonidoGolpe(nullptr), sonidoGritoBride(nullptr),
+    bannerZanshin(nullptr), textoBanner(nullptr)
+    {}
 
 
 void Nivel::cargar()
@@ -72,19 +74,53 @@ void Nivel::cargar()
     connect(bride, &Bride::zanshinEspecialterminado,
             oren, &Oren::desactivarModoDebilitado);
 
+    sonidoGolpe = new QSoundEffect(this);
+    sonidoGolpe->setSource(QUrl("qrc:/audio/espadaGolpe.wav"));
+    sonidoGolpe->setVolume(0.7f);
+
+    sonidoGritoBride = new QSoundEffect(this);
+    sonidoGritoBride->setVolume(0.7f);
+
+    bannerZanshin = new QGraphicsRectItem(300, 15, 600, 70);
+    bannerZanshin->setBrush(QBrush(QColor(180, 0, 0, 200)));
+    bannerZanshin->setPen(QPen(Qt::yellow, 2));
+    bannerZanshin->setZValue(20);
+    bannerZanshin->setVisible(false);
+    escena->addItem(bannerZanshin);
+
+    QFont fuenteBanner("Helvetica", 22, QFont::Bold);
+    fuenteBanner.setItalic(true);
+    textoBanner = escena->addText(" ZANSHIN ESPECIAL ", fuenteBanner);
+    textoBanner->setDefaultTextColor(Qt::yellow);
+    textoBanner->setPos(340, 28);
+    textoBanner->setZValue(21);
+    textoBanner->setVisible(false);
+
+    connect(bride, &Bride::zanshinEspecialIniciado, this, [this](){
+    bannerZanshin->setVisible(true);
+    textoBanner->setVisible(true);
+    });
+
+    connect(bride, &Bride::zanshinEspecialterminado, this, [this](){
+    bannerZanshin->setVisible(false);
+    textoBanner->setVisible(false);
+    });
 }
 
 void Nivel::verificarBordes()
 {
+    if(!bride || !oren) return;
     if(bride->getPosx() < BORDE_IZQUIERDO)
     {
         bride->setPosx(BORDE_IZQUIERDO);
-        bride->setVelx(0);
+        if(bride->getEstado() != Estado::Saltando)
+            bride->setVelx(0);
     }
     if(bride->getPosx() > BORDE_DERECHO)
     {
         bride->setPosx(BORDE_DERECHO);
-        bride->setVelx(0);
+        if(bride->getEstado() != Estado::Saltando)
+            bride->setVelx(0);
     }
 
     if(oren->getPosx() < BORDE_IZQUIERDO)
@@ -105,6 +141,7 @@ void Nivel::inputJugador(QKeyEvent *evento)
         return;
 
     teclasActivas.insert(evento->key());
+    if(bride->getEstado() == Estado::Saltando) return;
     if(bride->getZanshinEspecialActivo())
     {
         if(teclasActivas.contains(Qt::Key_Space) &&
@@ -155,6 +192,7 @@ void Nivel::inputJugadorLiberada(QKeyEvent *evento)
     if(!bride)
         return;
     teclasActivas.remove(evento->key());
+    if(bride->getEstado() == Estado::Saltando) return;
     switch(evento->key())
     {
     case Qt::Key_A:
@@ -196,6 +234,7 @@ void Nivel::verificarColisiones()
             oren->recibirGolpe();
             bride->registrarZanshin(bride->getZonaActual());
             actualizarMarcador();
+            sonidoGolpe->play();
         }
     }
     else{
@@ -211,6 +250,12 @@ void Nivel::verificarColisiones()
             puntosOren++;
             bride->recibirGolpe();
             actualizarMarcador();
+            int grito = QRandomGenerator::global()->bounded(2);
+            sonidoGritoBride->setSource(
+                QUrl(grito == 0 ? "qrc:/audio/grito1.wav"
+                                : "qrc:/audio/grito2.wav")
+                );
+            sonidoGritoBride->play();
         }
     }
     else{

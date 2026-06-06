@@ -8,8 +8,8 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QSet>
-
-
+#include <QGraphicsRectItem>
+#include <QSoundEffect>
 
 
 class Nivel:public QObject
@@ -40,6 +40,10 @@ private:
     QGraphicsTextItem* textoZanshin;
     const unsigned short MAX_PUNTOS = 5;
     QSet<int> teclasActivas;
+    QSoundEffect* sonidoGolpe;
+    QSoundEffect* sonidoGritoBride;
+    QGraphicsRectItem* bannerZanshin;
+    QGraphicsTextItem* textoBanner;
 public:
 
     Nivel(unsigned short int numero, QGraphicsScene* escena);
