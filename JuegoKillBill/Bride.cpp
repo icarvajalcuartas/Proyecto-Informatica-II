@@ -7,7 +7,7 @@
 #include <QPainter>
 
 Bride::Bride(float posx, float posy):Personaje("The Bride",posx,posy,5),
-    contZanshin(0),puntaje(0),fisicaActual(ModoFisica::Uniforme),
+    contZanshin(0),fisicaActual(ModoFisica::Uniforme),
     enSuelo(true),ultimoAtaquevalido(ZonaAtaque::Inicial){
     seccionarSpritesheet(":/sprites/thebride_2.png");
     actualizarSprite();
@@ -23,17 +23,17 @@ void Bride::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
              << spriteActual.height();
     painter->drawPixmap(0, 0,spriteActual);
 
-    if(estado == Estado::Atacando)
-    {
-        painter->setPen(Qt::red);
-        painter->drawRect(getHitboxAtaque());
-    }
-    painter->setPen(Qt::blue);
-    painter->drawRect(getZonaMen());
-    painter->drawRect(getZonaDo());
-    painter->drawRect(getZonaKote());
-    painter->setPen(Qt::green);
-    painter->drawRect(getHitboxCuerpo());
+    // if(estado == Estado::Atacando)
+    // {
+    //     painter->setPen(Qt::red);
+    //     painter->drawRect(getHitboxAtaque());
+    // }
+    // painter->setPen(Qt::blue);
+    // painter->drawRect(getZonaMen());
+    // painter->drawRect(getZonaDo());
+    // painter->drawRect(getZonaKote());
+    // painter->setPen(Qt::green);
+    // painter->drawRect(getHitboxCuerpo());
 }
 
 void Bride::actualizar(float difTiempo)
@@ -246,22 +246,16 @@ void Bride::movRectilineo(float difTiempo)
 
 
 void Bride::movSaltoY(float difTiempo)
-{/*
-    vely += 2 * difTiempo;
-    posy += vely  * difTiempo;
-    setPos(posx, posy);*/
+{
     vely += 500.0f * difTiempo;
     posy += vely * difTiempo;
 
-    if(posy >= 300.0f)
+    if(posy >= SUELO_Y)
     {
-        posy = 300.0f;
+        posy = SUELO_Y;
         vely = 0;
-
         enSuelo = true;
-
         estado = Estado::Quieto;
-
         fisicaActual = ModoFisica::Uniforme;
         frameActual = 0;
     }
@@ -274,6 +268,17 @@ void Bride::movParabolico(float difTiempo)
     vely += acely * difTiempo;
     posx += velx * difTiempo;
     posy += vely * difTiempo;
+    if(posy >= SUELO_Y)
+    {
+        posy    = SUELO_Y;
+        vely    = 0;
+        velx    = 0;
+        acely   = 0;
+        enSuelo = true;
+        estado  = Estado::Quieto;
+        fisicaActual = ModoFisica::Uniforme;
+        frameActual  = 0;
+    }
     setPos(posx, posy);
 }
 
@@ -290,6 +295,11 @@ void Bride::movDosDimensiones(float difTiempo)
 bool Bride::getEnSuelo() const
 {
     return enSuelo;
+}
+
+bool Bride::getZanshinEspecialActivo() const
+{
+    return zanshinEspecialActivo;
 }
 
 unsigned short Bride::getContZanshin() const
@@ -345,12 +355,12 @@ void Bride::saltarDerecha()
         return;
 
     estado = Estado::Saltando;
-
+    dirActual = Direccion::Derecha;
     fisicaActual = ModoFisica::Parabolica;
 
-    velx = 200.0f;
-    vely = -FUERZA_SALTO;
-
+    velx = VEL_HORIZONTAL_PARABOLICO;
+    vely = -FUERZA_SALTO_PARABOLICO;
+    acely = GRAVEDAD_PARABOLICO;
     enSuelo = false;
 }
 
@@ -360,12 +370,12 @@ void Bride::saltarIzquierda()
         return;
 
     estado = Estado::Saltando;
-
+    dirActual = Direccion::Izquierda;
     fisicaActual = ModoFisica::Parabolica;
 
-    velx = -200.0f;
-    vely = -FUERZA_SALTO;
-
+    velx = -VEL_HORIZONTAL_PARABOLICO;
+    vely = -FUERZA_SALTO_PARABOLICO;
+    acely = GRAVEDAD_PARABOLICO;
     enSuelo = false;
 }
 

@@ -9,13 +9,15 @@ private:
     unsigned short int contZanshin;
     bool zanshinEspecialActivo = false;
     float tiempoZanshinEspecial = 0.0f;
-    const float DUR_ZANSHINESPECIAL = 10.0f;
-    unsigned short int puntaje;
-    bool ataqueValido;
     ModoFisica fisicaActual;
     bool enSuelo;
+    const float DUR_ZANSHINESPECIAL = 10.0f;
     const float FUERZA_SALTO = 500.0f;
     const float FUERZA_HORIZONTAL = 50.0f;
+    const float FUERZA_SALTO_PARABOLICO = 600.0f;
+    const float VEL_HORIZONTAL_PARABOLICO = 400.0f;
+    const float GRAVEDAD_PARABOLICO   = 500.0f;
+    const float SUELO_Y               = 400.0f;
     void movRectilineo(float difTiempo);
     void movSaltoY(float difTiempo);
     void movParabolico(float difTiempo);
