@@ -38,6 +38,7 @@ public:
     Juego();
     void iniciarMenu(QGraphicsView* ventana);
     void inicialNivel(unsigned short int nivel);
+    void ajustarVista();
     unsigned short int getNivelActual() const;
     ~Juego();
 private slots:

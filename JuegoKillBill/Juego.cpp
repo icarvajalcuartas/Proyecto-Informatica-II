@@ -9,7 +9,7 @@ Juego::Juego() :nivelActual(0),estadoJuegoActual(EstadoJuego::Menu),vista(nullpt
     escenaMenu = new QGraphicsScene(this);
     escenaJuego = new QGraphicsScene(this);
     timer = new QTimer(this);
-    // niveles.append(new Nivel(1, escenaJuego));
+    //niveles.append(new Nivel(1, escenaJuego));
     // niveles.append(new Nivel(2, escenaJuego));
     connect(timer,&QTimer::timeout,this,&Juego::actualizarJuego);
     timer->start(16);
@@ -88,6 +88,8 @@ void Juego::iniciarMenu(QGraphicsView *ventana)
     });
     qDebug() << "Paso 7: conexiones OK";
     vista->setScene(escenaMenu);
+    qDebug() << "SceneRect:" << escenaMenu->sceneRect();
+    qDebug() << "Items en escena:" << escenaMenu->items().size();
     qDebug() << "Paso 8: escena asignada";
     qDebug() << "Ruta musica menu:" << musicaMenu->source();
     musicaMenu->play();
@@ -116,8 +118,9 @@ bool Juego::eventFilter(QObject *obj, QEvent *event)
         QKeyEvent* tecla = static_cast<QKeyEvent*>(event);
         if(tecla->isAutoRepeat())
             return true;
-
+        if(nivelActual < (unsigned short)niveles.size()) {
         niveles[nivelActual]->inputJugadorLiberada(tecla);
+        }
     }
 
     return QObject::eventFilter(obj,event);
@@ -155,10 +158,10 @@ void Juego::inicialNivel(unsigned short nivel)
     niveles[nivelActual]->cargar();
 
     if(nivel == 0)
-        musicaNivel->setSource(QUrl("qrc:/audio/nivel1.mp3"));
-    else
-        musicaNivel->setSource(QUrl("qrc:/audio/nivel2.mp3"));
-    //musicaNivel->play();
+        musicaNivel->setSource(QUrl("qrc:/audio/Lonely.mp3"));
+    // else
+    //     musicaNivel->setSource(QUrl("qrc:/audio/nivel2.mp3"));
+    musicaNivel->play();
 
     connect(niveles[nivelActual], &Nivel::victoria,
             this, [this](){ cambiarEstado(EstadoJuego::Victoria); });
@@ -166,10 +169,18 @@ void Juego::inicialNivel(unsigned short nivel)
             this, [this](){ cambiarEstado(EstadoJuego::Derrota); });
 
     vista->setScene(escenaJuego);
+    vista->setSceneRect(0, 0, 1200, 630);
+    ajustarVista();
     estadoJuegoActual = (nivel == 0) ? EstadoJuego::Nivel1 : EstadoJuego::Nivel2;
 
     timer->start(16);
 
+}
+
+void Juego::ajustarVista()
+{
+    if(vista)
+        vista->fitInView(0, 0, 1200, 630, Qt::IgnoreAspectRatio);
 }
 
 void Juego::cambiarEstado(EstadoJuego nuevoEstado)
@@ -185,10 +196,12 @@ void Juego::cambiarEstado(EstadoJuego nuevoEstado)
         escenaJuego->clear();
 
         QGraphicsScene* escenaFinal = new QGraphicsScene(this);
-        QPixmap img(":/imagenes/victoria.png");
+        QPixmap img(":/fondo/fondoVictoria.png");
         escenaFinal->addPixmap(img);
         escenaFinal->setSceneRect(0, 0, 1200, 630);
         vista->setScene(escenaFinal);
+        vista->setSceneRect(0, 0, 1200, 630);
+        ajustarVista();
         break;
     }
     case EstadoJuego::Derrota:
@@ -198,10 +211,11 @@ void Juego::cambiarEstado(EstadoJuego nuevoEstado)
         escenaJuego->clear();
 
         QGraphicsScene* escenaFinal = new QGraphicsScene(this);
-        QPixmap img(":/imagenes/derrota.png");
+        QPixmap img(":/fondo/fondoDerrota.png");
         escenaFinal->addPixmap(img);
         escenaFinal->setSceneRect(0, 0, 1200, 630);
         vista->setScene(escenaFinal);
+        ajustarVista();
         break;
     }
     default:

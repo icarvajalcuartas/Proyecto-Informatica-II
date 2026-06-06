@@ -6,8 +6,12 @@
     </qresource>
     <qresource prefix="/audio">
         <file>Bangbang.mp3</file>
+        <file>Lonely.mp3</file>
     </qresource>
     <qresource prefix="/fondo">
         <file>fondomenu.png</file>
+        <file>fondonivel1.png</file>
+        <file>fondoDerrota.png</file>
+        <file>fondoVictoria.png</file>
     </qresource>
 </RCC>
