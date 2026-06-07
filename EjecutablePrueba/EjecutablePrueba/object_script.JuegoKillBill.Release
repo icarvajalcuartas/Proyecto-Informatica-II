@@ -1,0 +1,16 @@
+release/Bill.o
+release/Bride.o
+release/Juego.o
+release/Nivel.o
+release/Oren.o
+release/Personaje.o
+release/main.o
+release/mainwindow.o
+release/qrc_sprites.o
+release/moc_Bill.o
+release/moc_Bride.o
+release/moc_Juego.o
+release/moc_Nivel.o
+release/moc_Oren.o
+release/moc_Personaje.o
+release/moc_mainwindow.o

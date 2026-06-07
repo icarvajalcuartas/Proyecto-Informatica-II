@@ -34,10 +34,7 @@ protected:
     float vely;
     float acelx;
     float acely;
-    float ancho;
-    float alto;
     unsigned short int vida;
-    bool activo;
     QString nombre;
     Estado estado;
     ZonaAtaque zonaActual;
@@ -78,18 +75,15 @@ public:
     float getVely()const;
     float getAcelx() const;
     float getAcely() const;
-    float getAncho() const;
-    float getAlto() const;
     unsigned short int getVida() const;
-    bool getActivo() const;
     QString getNombre() const;
     ZonaAtaque getZonaActual() const;
     QRectF getZonaMen() const;
     QRectF getZonaDo() const;
     QRectF getZonaKote() const;
     Estado getEstado() const;
+    void setEstado(Estado estadodif);
     virtual ~Personaje();
-
 
 };
 #endif // PERSONAJE_H

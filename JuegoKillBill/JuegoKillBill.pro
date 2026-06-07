@@ -10,23 +10,23 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Bill.cpp \
     Bride.cpp \
     Juego.cpp \
     Nivel.cpp \
     Oren.cpp \
     Personaje.cpp \
     main.cpp \
-    mainwindow.cpp \
-    test.cpp
+    mainwindow.cpp
 
 HEADERS += \
+    Bill.h \
     Bride.h \
     Juego.h \
     Nivel.h \
     Oren.h \
     Personaje.h \
-    mainwindow.h \
-    test.h
+    mainwindow.h
 
 FORMS += \
     mainwindow.ui

@@ -3,7 +3,7 @@
 Personaje::Personaje(QString nombre, float posx, float posy,
                      unsigned short vida,QGraphicsItem* parent) :
     QGraphicsObject(parent),spriteActual(),frameActual(0),posx(posx),posy(posy),velx(0.0f),vely(0.0f), acelx(0.0f),
-    acely(0.0f),ancho(0.0f),alto(0.0f),vida(vida),activo(true), nombre(nombre),
+    acely(0.0f),vida(vida), nombre(nombre),
     estado(Estado::Quieto),zonaActual(ZonaAtaque::Inicial),dirActual(Direccion::Izquierda)
     {
     setPos(posx,posy);
@@ -23,15 +23,8 @@ void Personaje:: cargarSprites(const QString& ruta, Estado estado, Direccion dir
     }else{
         qDebug()<<" se encontro la ruta";
     }
-    qDebug() << hojaSprites.width()
-             << hojaSprites.height();
     QVector<QPixmap>* frames = new QVector<QPixmap>();
     frames->reserve(numFrames);
-    qDebug()
-        << "Fila:" << fila
-        << "Estado:" << static_cast<int>(estado)
-        << "Direccion:" << static_cast<int>(direccion)
-        << "Zona:" << static_cast<int>(zona);
 
     for (unsigned short int i=0; i<numFrames; ++i){
         QPixmap frame= hojaSprites.copy(i*frameAncho, fila*frameAlto, frameAncho, frameAlto);
@@ -52,12 +45,22 @@ Estado Personaje::getEstado() const
     return estado;
 }
 
+void Personaje::setEstado(Estado estadodif)
+{
+    estado = estadodif;
+    frameActual = 0;
+    if(estadodif == Estado::Derrotado || estadodif == Estado::Golpeado  || estadodif == Estado::Quieto)
+    {
+        zonaActual = ZonaAtaque::Inicial;
+    }
+    actualizarSprite();
+}
+
 QVector<QPixmap> *Personaje::obtenerSpriteActual() {
     AnimacionKey key{ estado, dirActual, zonaActual };
 
     auto it = sprites.find(key);
     if(it != sprites.end()){
-        qDebug() << "Animacion encontrada";
         return it.value();
     }
     qDebug() << "Animacion NO encontrada";
@@ -119,24 +122,26 @@ QRectF Personaje::getHitboxAtaque() const
     switch(zonaActual)
     {
     case ZonaAtaque::Men:
-        hitbox = QRectF(0, 0, 30, 20);
+        hitbox = QRectF(0, 0, 10, 20);
         break;
 
     case ZonaAtaque::Do:
-        hitbox = QRectF(0, 40, 30, 20);
+        hitbox = QRectF(0, 40, 10, 20);
         break;
 
     case ZonaAtaque::Kote:
-        hitbox = QRectF(0, 80, 30, 20);
+        hitbox = QRectF(0, 80, 10, 20);
         break;
 
     default:
         return QRectF();
     }
-    float offsetX = (dirActual == Direccion::Derecha)? getHitboxCuerpo().width()
-                        : -hitbox.width();
-
-    hitbox.translate(offsetX, 0);
+    if(dirActual == Direccion::Derecha)
+        hitbox.translate(getHitboxCuerpo().right(), 0);
+    else if(dirActual == Direccion::Izquierda)
+        hitbox.translate(getHitboxCuerpo().left() - hitbox.width(), 0);
+    else if(dirActual == Direccion::Adelante || dirActual == Direccion::Atras)
+        hitbox.translate(getHitboxCuerpo().center().x() - hitbox.width()/2, 0);
     return hitbox;
 }
 
@@ -216,10 +221,7 @@ float Personaje::getVelx() const{return velx;}
 float Personaje::getVely() const{return vely;}
 float Personaje::getAcelx() const{return acelx;}
 float Personaje::getAcely() const{return acely;}
-float Personaje::getAncho() const{return ancho;}
-float Personaje::getAlto() const{return alto;}
 unsigned short Personaje::getVida() const{return vida;}
-bool Personaje::getActivo() const{return activo;}
 QString Personaje::getNombre() const{return nombre;}
 ZonaAtaque Personaje::getZonaActual() const{return zonaActual;}
 QRectF Personaje::getZonaMen() const{return zonaMenLocal;}

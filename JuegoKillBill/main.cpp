@@ -3,11 +3,7 @@
 #include <QWidget>
 #include <QDebug>
 #include <QGraphicsView>
-
 #include <QKeyEvent>
-#include "Bride.h"
-#include <QDir>
-#include "test.h"
 #include"Juego.h"
 
 
@@ -16,7 +12,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    qDebug() << QDir::currentPath();
 
     Juego *juego = new Juego();
     QGraphicsView* ventana=new QGraphicsView();

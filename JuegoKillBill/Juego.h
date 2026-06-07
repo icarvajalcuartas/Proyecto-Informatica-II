@@ -7,6 +7,7 @@
 #include <QAudioOutput>
 #include <QVector>
 #include "Nivel.h"
+#include "Bill.h"
 
 enum class EstadoJuego
 {
@@ -34,6 +35,10 @@ private:
     QMediaPlayer* musicaNivel;
     QAudioOutput* salidaNivel;
     QVector<Nivel*> niveles;
+    Dificultad dificultadNivel2;
+    QGraphicsScene* escenaDificultad;
+    void mostrarSeleccionDificultad();
+    bool soloPintar;
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 public:

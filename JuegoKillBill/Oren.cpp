@@ -7,7 +7,7 @@
 Oren::Oren(float posx, float posy): Personaje("O-Ren", posx, posy, 5), distanciaAmenaza(200.0f),
     distanciaRetroceder(80.0f),
     velocidad(120.0f),
-    acumTiempo(0.0f),acumSprite(0.0f),cooldownAtaque(false),tiempoCooldown(0.0f)
+    acumTiempo(0.0f),acumSprite(0.0f),accionActual(Accion::Esperar),modoDebilitado (false),cooldownAtaque(false),tiempoCooldown(0.0f)
 {
     seccionarSpritesheet(":/sprites/o-ren.png");
     actualizarSprite();
@@ -20,19 +20,9 @@ void Oren::paint(QPainter *painter,
                  const QStyleOptionGraphicsItem *option,
                  QWidget *widget)
 {
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
     painter->drawPixmap(0, 0,spriteActual);
-
-    // if(estado == Estado::Atacando)
-    // {
-    //     painter->setPen(Qt::red);
-    //     painter->drawRect(getHitboxAtaque());
-    // }
-    // painter->setPen(Qt::blue);
-    // painter->drawRect(getZonaMen());
-    // painter->drawRect(getZonaDo());
-    // painter->drawRect(getZonaKote());
-    // painter->setPen(Qt::green);
-    // painter->drawRect(getHitboxCuerpo());
 }
 void Oren::actualizar(float dt)
 {
