@@ -17,7 +17,7 @@ private:
     float acumTiempo;
     float acumSprite;
     Accion accionActual;
-    bool modoDebilitado = false;
+    bool modoDebilitado;
     bool cooldownAtaque;
     float tiempoCooldown;
     void decidirAccion(Personaje* jugador);
@@ -32,8 +32,6 @@ public:
     void actualizarAnimacion(float dt);
     void activarModoDebilitado();
     void desactivarModoDebilitado();
-
-
 };
 
 #endif // OREN_H
